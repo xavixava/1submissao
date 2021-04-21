@@ -13,7 +13,7 @@ struct GraphStruct
 {
 	int v; 
 	int e; 
-	Node **vector; 
+	Location **vector; 
 };
 
 /*  Data Type: Location
@@ -25,18 +25,19 @@ struct NodeStruct
 {
 	int localidade;
 	char *interesse;
+	List *adj;
 };
 
 /*  Data Type: Node
  *  Description: Structure with:
  *      1) Item (possibly pointer to data)
  *      2) Pointer to next node of the list.
- */
+ *
 struct Vector
 {
 	Item this;
     List *next;
-};
+};*/
 
 /*
  *  Function:
@@ -57,7 +58,7 @@ struct Vector
 Graph *GRAPHinit(int v)
 {
 	Graph *g;
-	List **vector;
+	Location **vector;
 	
 	g = (Graph *) malloc(sizeof(Graph)); 
 	
@@ -67,7 +68,8 @@ Graph *GRAPHinit(int v)
 	g->e = 0;
 	
 	*vector = initList();
-	vector = (Node **) malloc(v*sizeof(Node*));
+	vector = (Location **) malloc(v*sizeof(Location*));
+	vector = g->vector;
 	
 	return g;
 }
@@ -76,10 +78,8 @@ void GRAPHaddV(Graph *g, Location *n)
 {
 	if((*n).localidade < (*g).v){
 		int index = (n->localidade) - 1;
-		(*g).vector[index] = (Node *) malloc(sizeof(Node));
-		(*g).vector[index]->this = n;
-		(*g).vector[index]->next = NULL;
-	return;
+		(*g).vector[index] = (Node *) malloc(sizeof(Location));
+		return;
 	}
 	printf("Localidade inexistente");
 	return;
@@ -88,7 +88,13 @@ void GRAPHaddV(Graph *g, Location *n)
 void GRAPHinsertE(Graph *g, List *l, int index)
 {
 	List *n;
+	n = initList();
 	if(g->vector[index-1]->next != NULL) n =g->vector[index-1]->next;
+	else
+	{
+		g->vector[index-1]->next = l;
+		return;
+	}
 	while (getNextNodeList(n) != NULL) getNextNodeList(n);
 	insertNextNodeList(n, l);
 	g->e++;
@@ -138,6 +144,26 @@ void GRAPHdestroy(Graph *g)
 
 /*
  *  Function:
+ *    getItemList
+ *
+ *  Description:
+ *    Gets the item of a list node.
+ *
+ *  Arguments:
+ *    Pointer to a list node:
+ *        (LinkedList *) node
+ *
+ *  Return value:
+ *    Returns the pointer to the item of a linked list node. NULL
+ *   is returned if the node is NULL (or if the item is NULL).
+ *
+Item getItemList(Node *node)
+{
+    return ((node == NULL) ? NULL : node->this);
+}*/
+
+/*
+ *  Function:
  *    getItemLinkedList
  *
  *  Description:
@@ -151,7 +177,5 @@ void GRAPHdestroy(Graph *g)
  *    Returns the pointer to the item of a linked list node. NULL
  *   is returned if the node is NULL (or if the item is NULL).
  */
-Item getItemList(Node *node)
-{
-    return ((node == NULL) ? NULL : node->this);
-}
+ 
+ 
