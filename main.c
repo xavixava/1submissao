@@ -2,19 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "main.h"
+
 #define MAX_LINHA 30
 
-
-FILE *Openfile(char *name, char *mode);
-
-void readprbs( FILE* fpprobs, int prob, int map);
-
-void readmaps(FILE* fpmaps, int prob, int map);
-
-
-
 int main(int argc, char **argv){
-
+	
+	Graph *g;
 	int map, prob, i = 0;
 	char *probsname = argv[2], *mapsname = argv[3], *saida;
 	FILE *mapfile, *probfile, *out;
@@ -54,36 +48,27 @@ int main(int argc, char **argv){
 	}
 
     mapfile = Openfile(mapsname, "r");
-
-
-
 	probfile = Openfile(probsname, "r");
-
-
+	
 	readprbs(probfile, prob, map);
+	
+    g = readmaps(mapfile, prob, map);
 
-    readmaps( mapfile, prob, map);
-
-    saida=NULL;
-
-   saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
-
-
+    saida = NULL;
+    saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
 	saida = strcat((strncpy(saida, mapsname, (strlen(mapsname)-5))), ".queries");
 
 	out = Openfile(saida, "w+");
-
-
 
 	fprintf(out, "Hello world \n");
 
 	free(saida);
 
+	GRAPHdestroy(g);
+	
 	fclose(out);
 	fclose(probfile);
 	fclose(mapfile);
-
-
 
 	return 0;
 }
@@ -149,8 +134,9 @@ void readprbs(FILE* fpprobs, int prob, int map){
     return;
 }
 
-void readmaps(FILE* fpmaps, int prob, int map){
+Graph *readmaps(FILE* fpmaps, int prob, int map){
 
+	Graph *g;
     int n_vertices, n_arestas, countv=0, counta=0;
     float custos;
     char auxc[MAX_LINHA], *classificador;
@@ -158,11 +144,12 @@ void readmaps(FILE* fpmaps, int prob, int map){
 
     while(!feof(fpmaps)){
 
-
+		
         if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
-
-         printf(" ** %d %d \n", n_vertices , n_arestas);
-
+		
+		g = GRAPHinit(n_vertices);
+		
+        printf(" ** %d %d \n", n_vertices , n_arestas);
 
          while(countv!=n_vertices){
 
@@ -175,11 +162,10 @@ void readmaps(FILE* fpmaps, int prob, int map){
 
             }else{
 
-                classificador =(char*)malloc((strlen(auxc)+1)*sizeof(char));
+                classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
                 strcpy(classificador, auxc);
-
                 }
-
+			GRAPHaddV(g, edge1, classificador);
             countv++;
             printf("%d %s\n", edge1, classificador);
          }
@@ -188,7 +174,8 @@ void readmaps(FILE* fpmaps, int prob, int map){
 
             fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
             counta++;
-
+			GRAPHinsertE(g, edge1, edge2, custos);
+			GRAPHinsertE(g, edge2, edge1, custos);
             printf("%d %d %f\n", edge1, edge2, custos);
 
          }
@@ -196,5 +183,5 @@ void readmaps(FILE* fpmaps, int prob, int map){
     if(map==0)  break;
 
     }
-
+	return g;
 }

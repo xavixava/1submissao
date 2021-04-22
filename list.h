@@ -68,28 +68,6 @@ typedef struct ListStruct List;
  */
 List * initList(void);
 
-
-
-/*
- *  Function:
- *    freeLinkedList
- *
- *  Description:
- *    Frees the memory allocated to a linked list.
- *
- *  Arguments:
- *    Pointer to the first element of a linked list:
- *      (LinkedList *) first
- *    Function to free the memory allocated to the items:
- *      void freeItem(Item)
- *
- *  Return value:
- *    None
- */
-/*void freeList(List * first, void (* freeItemFnt)(Item));
-
-
-
 /*
  *  Function:
  *    lengthLinkedList

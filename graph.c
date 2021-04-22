@@ -2,6 +2,7 @@
 #include<stdlib.h>
 
 #include"graph.h"
+#include"list.h"
 
 /*	Data Type: Graph
  *  Description: Structure with:
@@ -25,7 +26,7 @@ struct NodeStruct
 {
 	int localidade;
 	char *interesse;
-	List *adj;
+	List *next;
 };
 
 /*  Data Type: Node
@@ -67,29 +68,37 @@ Graph *GRAPHinit(int v)
 	(*g).v = v;
 	g->e = 0;
 	
-	*vector = initList();
+	vector = NULL;
 	vector = (Location **) malloc(v*sizeof(Location*));
-	vector = g->vector;
+	*vector = NULL;
+	g->vector = vector;
 	
 	return g;
 }
 
-void GRAPHaddV(Graph *g, Location *n)
-{
-	if((*n).localidade < (*g).v){
-		int index = (n->localidade) - 1;
-		(*g).vector[index] = (Node *) malloc(sizeof(Location));
+void GRAPHaddV(Graph *g, int localidade, char *interesse)
+{	
+	Location *n;
+	if(localidade < (*g).v){
+		n = (Location *) malloc(sizeof(Location));
+		n -> localidade = localidade;
+		n -> interesse = interesse;
+		n -> next = initList();
+		(*g).vector[localidade];
 		return;
 	}
 	printf("Localidade inexistente");
 	return;
 }
 
-void GRAPHinsertE(Graph *g, List *l, int index)
+void GRAPHinsertE(Graph *g, int index, int adj, int custo)
 {
-	List *n;
+	List *n, *l;
 	n = initList();
-	if(g->vector[index-1]->next != NULL) n =g->vector[index-1]->next;
+	l = initList();
+	l = (List *) malloc(2*sizeof(int)+sizeof(List*));
+	assignIndexList(l, adj, custo);	
+	if(g->vector[index-1]->next != NULL) n = g->vector[index-1]->next;
 	else
 	{
 		g->vector[index-1]->next = l;
@@ -115,6 +124,7 @@ void GRAPHremoveE(Graph *g, int i, int index)
 	}
 	prev = getNextNodeList(next);
 	free(next);
+	g->e--;
 	return;
 }
 
@@ -123,7 +133,7 @@ void GRAPHdestroy(Graph *g)
 	List *n, *p;
 	int i = 0;
 	
-	for(i = 0; i < g->v; i++)
+	for(i = 0; i < g->v; i++, free(g->vector[i]->interesse))
 	{
 		p = g->vector[i]->next;
 		n = p;
@@ -144,38 +154,78 @@ void GRAPHdestroy(Graph *g)
 
 /*
  *  Function:
- *    getItemList
+ *    modoC0
  *
  *  Description:
- *    Gets the item of a list node.
+ *    Discovers if a node has a neighbor in k stages.
  *
  *  Arguments:
- *    Pointer to a list node:
- *        (LinkedList *) node
- *
- *  Return value:
- *    Returns the pointer to the item of a linked list node. NULL
- *   is returned if the node is NULL (or if the item is NULL).
- *
-Item getItemList(Node *node)
-{
-    return ((node == NULL) ? NULL : node->this);
-}*/
-
-/*
- *  Function:
- *    getItemLinkedList
- *
- *  Description:
- *    Gets the item of a linked list node.
- *
- *  Arguments:
- *    Pointer to a linked list node:
- *        (LinkedList *) node
- *
+ *    pointer to the graph: g
+ *    int keeping the original node: v
+ *	  int  keeping the number of stages: k
  *  Return value:
  *    Returns the pointer to the item of a linked list node. NULL
  *   is returned if the node is NULL (or if the item is NULL).
  */
  
- 
+int modoC0 (Graph *g, int v, int k)
+ { 
+	int a = g->v;
+	int visited[a];
+	memset(visited, 0, a*sizeof(int));
+	return vizinho(g, v,visited, k, 0);
+ }
+
+/*
+ *  Function:
+ *    vizinho
+ *
+ *  Description:
+ *    Discovers if a node has a neighbor in k stages.
+ *
+ *  Arguments:
+ *    pointer to the graph: g
+ *    int keeping the original node: v
+ *	  int  keeping the number of stages
+ *  Return value:
+ *    Returns the pointer to the item of a linked list node. NULL
+ *   is returned if the node is NULL (or if the item is NULL).
+ */
+
+int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
+{
+	int a;
+	List *l = g->vector[v-1]->next;
+	visited[v-1] = 1;
+	if(stage == maxstage-1) return((visited[v-1] == 0) ? 1 : 0);
+	while(getNextNodeList(l)!=NULL)
+	{
+		if(visited[(getIndexList(l))-1] == 0) if(vizinho(g, getIndexList(l), visited, maxstage, stage++)==1) return 1;
+	}
+	return 0;
+}
+
+int modoD0(Graph *g, int v, int k)
+{
+	int a = g->v, i, count=0;
+	int visited[a];
+	memset(visited, 0, a*sizeof(int));
+	adjacencia(g, v, visited, k, 0);
+	for(i=0; i < a; i++){
+		if(visited[i]==1)count++;
+	}
+	return count;
+}
+
+void adjacencia(Graph *g, int v, int *visited, int maxstage, int stage)
+{
+	List *l = g->vector[v-1]->next;
+	visited[v-1] = 1;
+	if(stage == maxstage-1) return;
+	while(getNextNodeList(l)!=NULL)
+	{
+		if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, maxstage, stage++);
+	}
+	return;
+
+}
