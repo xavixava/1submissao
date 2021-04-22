@@ -15,7 +15,7 @@ OBJECTS = main.o graph.o list.o
 proj: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-main.o: main.c graph.h 
+main.o: main.c graph.h main.h list.h
 
 graph.o: graph.c graph.h list.h defs.h
 
