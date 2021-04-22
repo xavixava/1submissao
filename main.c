@@ -2,46 +2,48 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "graph.h"
-#include "defs.h"
+#define MAX_LINHA 30
 
 
 FILE *Openfile(char *name, char *mode);
 
+void readprbs( FILE* fpprobs, int prob, int map);
+
+void readmaps(FILE* fpmaps, int prob, int map);
+
 
 
 int main(int argc, char **argv){
-	
-	int map = 0, prob = 0, i = 0;
+
+	int map, prob, i = 0;
 	char *probsname = argv[2], *mapsname = argv[3], *saida;
 	FILE *mapfile, *probfile, *out;
-	
-	
+
 	if (argc == 4){
-		
-	if(argv[1][1]== 'o')	prob = 0;
-	
-	else if(argv[1][1]== 'a') prob = 1;
-	
-	if(argv[1][2] == 'o') map = 0;
-	
-	else if(argv[1][2] == 'a')  map = 1;
+
+	if(argv[1][2]== 'o')	prob = 0;
+
+	else if(argv[1][2]== 'a') prob = 1;
+
+	if(argv[1][3] == 'o') map = 0;
+
+	else if(argv[1][3] == 'a')  map = 1;
 	}
 	else if (argc!=4) exit(1);
-	
-	i=0;
-	while (i <= (strlen(probsname)-5)){ /*verificação da extensão do ficheiro prbs(possivelmente desnecessário)*/
-		if(i == (strlen(probsname)-5)){
-			if(probsname[i] != '.' || probsname[i+1] != 'p' || probsname[i+2] != 'r' || probsname[i+3] != 'b' || probsname[i+4] != 's') {
+
+
+	while (i <= (strlen(probsname)-6)){ /*verificação da extensão do ficheiro prbs(possivelmente desnecessário) */
+	if(i == (strlen(probsname)-6)){
+			if(probsname[i] != '.' || probsname[i+1] != 'p' || probsname[i+2] != 'r' || probsname[i+3] != 'b' || probsname[i+4] != 's' || probsname[i+5] != '1') {
 				printf("Extensão errada\n");
 				exit(1);
 			}
 		}
 		i++;
-	}
-	
+	}void solve();
+
 	i=0;
-	while (i <= (strlen(mapsname)-5)){  /*verificação da extensão do ficheiro maps(possivelmente desnecessário)*/
+	while (i <= (strlen(mapsname)-5)){ /* verificação da extensão do ficheiro maps(possivelmente desnecessário) */
 		if(i == (strlen(mapsname)-5)){
 			if(mapsname[i] != '.' || mapsname[i+1] != 'm' || mapsname[i+2] != 'a' || mapsname[i+3] != 'p' || mapsname[i+4] != 's') {
 				printf("Extensão errada\n");
@@ -50,36 +52,149 @@ int main(int argc, char **argv){
 		}
 		i++;
 	}
-	
-	mapfile = Openfile(mapsname, "r");
-	
+
+    mapfile = Openfile(mapsname, "r");
+
+
+
 	probfile = Openfile(probsname, "r");
-	
-	saida = (char*) malloc(strlen(mapsname)+3);
-	saida = strcat((strncpy(saida, mapsname, (strlen(mapsname)-5))), ".routes");
-	
+
+
+	readprbs(probfile, prob, map);
+
+    readmaps( mapfile, prob, map);
+
+    saida=NULL;
+
+   saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
+
+
+	saida = strcat((strncpy(saida, mapsname, (strlen(mapsname)-5))), ".queries");
+
 	out = Openfile(saida, "w+");
-	
-	free(saida);
-	
+
+
+
 	fprintf(out, "Hello world \n");
-	
+
+	free(saida);
+
 	fclose(out);
 	fclose(probfile);
 	fclose(mapfile);
-	
+
+
+
 	return 0;
 }
-	
-FILE *Openfile(char *name, char *mode)
+
+FILE *Openfile(char *filename, char *mode)
 {
    FILE *fp;
-	
-   fp = fopen(name, mode);
-   
+
+   fp = fopen(filename, mode);
+
+
+
    if (fp == NULL) {
-      fprintf(stderr, "Error: Unable to open file '%s'\n.", name);
-      exit(1);
+      fprintf(stderr, "Error: Unable to open file '%s'\n", filename);
+       exit(1);
    }
+
+
+
    return fp;
-   }
+}
+
+
+void readprbs(FILE* fpprobs, int prob, int map){
+
+    char modo[2];
+    int edge1=0, edge2=0, variante=0, k;
+
+
+    while(!feof(fpprobs)){
+
+       if (fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2)==2){
+
+           variante=1;
+           printf("%s %d %d\n", modo, edge1, edge2);
+
+        }else if(fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2)==3){
+
+
+            if(!strcmp("B0",modo)){
+
+                variante=2;
+                printf("%s %d %d\n", modo, edge1, edge2);
+
+            }else if(!strcmp("C0",modo)){
+
+                k=edge2;
+                variante=3;
+                printf("%s %d %d\n", modo, edge1, edge2);
+
+            }else if(!strcmp("D0",modo)){
+
+                k=edge2;
+                variante=4;
+                printf("%s %d %d\n", modo, edge1, edge2);
+            }
+        }
+        /* */
+
+        if(prob==1) break;
+    }
+
+    return;
+}
+
+void readmaps(FILE* fpmaps, int prob, int map){
+
+    int n_vertices, n_arestas, countv=0, counta=0;
+    float custos;
+    char auxc[MAX_LINHA], *classificador;
+    int edge1, edge2;
+
+    while(!feof(fpmaps)){
+
+
+        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
+
+         printf(" ** %d %d \n", n_vertices , n_arestas);
+
+
+         while(countv!=n_vertices){
+
+            fscanf(fpmaps, "%d %s", &edge1, auxc);
+
+
+            if(!strcmp("-",auxc)){
+
+                classificador=NULL;
+
+            }else{
+
+                classificador =(char*)malloc((strlen(auxc)+1)*sizeof(char));
+                strcpy(classificador, auxc);
+
+                }
+
+            countv++;
+            printf("%d %s\n", edge1, classificador);
+         }
+
+         while(counta!=n_arestas){
+
+            fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
+            counta++;
+
+            printf("%d %d %f\n", edge1, edge2, custos);
+
+         }
+
+    if(map==0)  break;
+
+    }
+
+}
