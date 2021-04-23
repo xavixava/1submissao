@@ -140,8 +140,8 @@ void GRAPHdestroy(Graph *g)
 			p = g->vector[i]->next;
 			n = p;
 			while(getNextNodeList(n)!=NULL){
-				free(n);
 				p = getNextNodeList(n);
+				free(n);
 				g->e--;
 				n = p;
 			}
@@ -150,8 +150,10 @@ void GRAPHdestroy(Graph *g)
 		}
 		free(g->vector[i]->interesse);
 	}
-	if(g->e==0)	free(g->vector);
-	else exit(1);
+	for(i=0; i < g->v; i++) free(g->vector[i]);
+	free(g->vector);
+	/*if(g->e==0)	free(g->vector);
+	else exit(1);*/
 	free(g);
 	return;
 }
@@ -200,10 +202,10 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
 {
 	List *l = g->vector[v-1]->next;
 	visited[v-1] = 1;
-	if(stage == maxstage-1) return((visited[v-1] == 0) ? 1 : 0);
+	if(stage == maxstage) return((visited[v-1] == 1) ? 1 : 0);
 	while(getNextNodeList(l)!=NULL)
 	{
-		if(visited[(getIndexList(l))-1] == 0) if(vizinho(g, getIndexList(l), visited, maxstage, stage++)==1) return 1;
+		if(visited[(getIndexList(l))-1] == 0) if(vizinho(g, getIndexList(l), visited, maxstage, ++stage)==1) return 1;
 		l = getNextNodeList(l);
 	}
 	return 0;
@@ -212,24 +214,32 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
 int modoD0(Graph *g, int v, int k)
 {
 	int a = g->v, i, count=0;
-	int visited[a];
+	int visited[a], adj[a];
 	memset(visited, 0, a*sizeof(int));
-	adjacencia(g, v, visited, k, 0);
+	memset(adj, 0, a*sizeof(int));
+	adjacencia(g, v, visited, adj, k, 0);
 	for(i=0; i < a; i++){
-		if(visited[i]==1)count++;
+		if(adj[i]==1)count++;
 	}
 	return count;
 }
 
-void adjacencia(Graph *g, int v, int *visited, int maxstage, int stage)
+void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage)
 {
 	List *l = g->vector[v-1]->next;
+	if(stage == maxstage){
+		if(visited[v-1]==0)adj[v-1] = 1;
+		return;
+	}
 	visited[v-1] = 1;
-	if(stage == maxstage-1) return;
 	while(getNextNodeList(l)!=NULL)
 	{
-		if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, maxstage, stage++);
+		if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, adj, maxstage, stage+1);
+		visited[(getIndexList(l))-1] = 0;
+		l = getNextNodeList(l);
 	}
+	if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, adj, maxstage, ++stage);
+	visited[(getIndexList(l))-1] = 0;
 	return;
 
 }
@@ -263,10 +273,10 @@ Graph *readmaps(FILE* fpmaps){
             fscanf(fpmaps, "%d %s", &edge1, auxc);
 
 
-            if(!strcmp("-",auxc)){
-
-                classificador=NULL;
-
+            if((strcmp("-",auxc))!=0){
+           
+				classificador=NULL;
+				
             }else{
 
                 classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));

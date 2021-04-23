@@ -99,7 +99,7 @@ List *getNextNodeList(List * node)
  */
 int getIndexList(List * node)
 {
-  return ((node == NULL) ? 0 : node->index);
+  return ((node == NULL) ? -1 : node->index);
 }
 
 /*

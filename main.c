@@ -4,11 +4,10 @@
 
 #include "main.h"
 
-
 int main(int argc, char **argv){
 	
 	Graph *g;
-	int map, prob, i = 0;
+	int map, prob, i = 0, l;
 	char *probsname = argv[2], *mapsname = argv[3], *saida;
 	FILE *mapfile, *probfile, *out;
 
@@ -23,7 +22,6 @@ int main(int argc, char **argv){
 	else if(argv[1][3] == 'a')  map = 1;
 	}
 	else if (argc!=4) exit(1);
-
 
 	while (i <= (strlen(probsname)-6)){ /*verificação da extensão do ficheiro prbs(possivelmente desnecessário) */
 	if(i == (strlen(probsname)-6)){
@@ -48,18 +46,23 @@ int main(int argc, char **argv){
 
     mapfile = Openfile(mapsname, "r");
 	probfile = Openfile(probsname, "r");
-
-	saida = NULL;
+	
 	saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
-	if (saida == NULL)
+	/*if (saida == NULL)
 	{
 		printf("Não foi possivel alocar memoria\n");
 		exit(1);
-	}
-	saida = strcat((strncpy(saida, mapsname, (strlen(mapsname)-5))), ".queries");
+	}*/
+	
+	l=strlen(mapsname)-5;
+	strncpy(saida, mapsname, (strlen(mapsname)-5));
+    saida[l]='\0';
+
+	saida = strcat(saida, ".queries");
 
 	out = Openfile(saida, "w+");
-	fprintf(out, "%s %s %s/n", argv[1], argv[2], argv[3]);
+	free(saida);
+	fprintf(out, "%s %s %s\n", argv[1], argv[2], argv[3]);
 
 	do
 	{
@@ -71,13 +74,11 @@ int main(int argc, char **argv){
 	
 			readprbs(probfile, g, out, prob);
 	
-		}while(prob==1 && !feof(probfile));
+		}while((prob==1) && (!feof(probfile)));
 		
 		GRAPHdestroy(g);
 		
 	}while((map==1) && (!feof(mapfile)));
-
-	free(saida);
 
 	fclose(out);
 	fclose(probfile);
@@ -103,7 +104,7 @@ int main(int argc, char **argv){
 FILE *Openfile(char *filename, char *mode)
 {
    FILE *fp;
-
+	
    fp = fopen(filename, mode);
 
    if (fp == NULL) {
@@ -132,7 +133,7 @@ void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
             printf("%s %d %d\n", modo, edge1, edge2);
 
         }else if((strcmp("C0", modo))==0){
-			if(edge2>0){
+			if(edge2>=0){
 				printf("%s %d %d\n", modo, edge1, edge2);
 				k = modoC0(g, edge1, edge2);
 				printf(" %d", k);
@@ -150,7 +151,7 @@ void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
 			else{
 				k = 0;
 			}
-			fprintf(out, "\n%d %d %s %d %d %d", getV(g), getE(g), modo, edge1, edge2, k);
+			fprintf(out, "\n%d %d %s %d %d %d \n", getV(g), getE(g), modo, edge1, edge2, k);
 		}
     }
         /* */
