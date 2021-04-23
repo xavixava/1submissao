@@ -133,23 +133,31 @@ void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
             printf("%s %d %d\n", modo, edge1, edge2);
 
         }else if((strcmp("C0", modo))==0){
-			if(edge2>=0){
-				printf("%s %d %d\n", modo, edge1, edge2);
-				k = modoC0(g, edge1, edge2);
-				printf(" %d", k);
-			}
-			else{
-				k = 0;
+			if((edge1<=0)||(edge1 > getV(g)))k=-1;
+			else
+			{
+				if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
+					printf("%s %d %d\n", modo, edge1, edge2);
+					k = modoC0(g, edge1, edge2);
+					printf(" %d", k);
+				}
+				else{
+					k = 0;
+				}
 			}
 				fprintf(out, "\n%d %d %s %d %d %d", getV(g), getE(g), modo, edge1, edge2, k);
         }else if((strcmp("D0",modo))==0){
-			if(edge2>0){
-				printf("%s %d %d\n", modo, edge1, edge2);
-				k = modoD0(g, edge1, edge2);
-				printf(" %d", k);
-			}
-			else{
-				k = 0;
+			if((edge1<=0)||(edge1 > getV(g)))k=-1;
+			else
+			{
+				if(edge2>0){
+					printf("%s %d %d\n", modo, edge1, edge2);
+					k = modoD0(g, edge1, edge2);
+					printf(" %d", k);
+				}
+				else{
+					k = 0;
+				}
 			}
 			fprintf(out, "\n%d %d %s %d %d %d \n", getV(g), getE(g), modo, edge1, edge2, k);
 		}

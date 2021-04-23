@@ -47,7 +47,7 @@ struct NodeStruct
  *    None
  */
 
-Graph *GRAPHinit(int v)
+Graph *GRAPHinit(int v, int a)
 {
 	Graph *g;
 	Location **vector;
@@ -60,7 +60,7 @@ Graph *GRAPHinit(int v)
 	}
 	
 	(*g).v = v;
-	g->e = 0;
+	g->e = a;
 	
 	vector = NULL;
 	vector = (Location **) malloc(v*sizeof(Location*));
@@ -107,7 +107,6 @@ void GRAPHinsertE(Graph *g, int index, int adj, float custo)
 	}
 	while (getNextNodeList(n) != NULL) n = getNextNodeList(n);
 	insertNextNodeList(n, l);
-	g->e++;
 	
 	return;
 }
@@ -264,7 +263,7 @@ Graph *readmaps(FILE* fpmaps){
 	
         if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
 		
-		g = GRAPHinit(n_vertices);
+		g = GRAPHinit(n_vertices, n_arestas);
 		
         printf(" ** %d %d \n", n_vertices , n_arestas);
 

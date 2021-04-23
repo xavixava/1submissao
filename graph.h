@@ -13,7 +13,7 @@ typedef struct GraphStruct Graph;
 typedef struct NodeStruct Location;
 typedef struct Vector Node;
 
-Graph *GRAPHinit(int v);
+Graph *GRAPHinit(int v, int a);
 void GRAPHinsertE(Graph *g, int index, int adj, float custo);
 void GRAPHremoveE(Graph *g, int i, int index);
 void GRAPHdestroy(Graph *g);
