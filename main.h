@@ -12,9 +12,6 @@
  */
 FILE *Openfile(char *name, char *mode);
 
-void readprbs( FILE* fpprobs, int prob, int map);
-
-Graph *readmaps(FILE* fpmaps, int prob, int map);
-
+void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob);
 
 #endif

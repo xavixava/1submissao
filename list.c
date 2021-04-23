@@ -13,7 +13,7 @@
 struct ListStruct
 {
     int index;
-	int custo;
+	float custo;
     List *next;
 };
 
@@ -99,7 +99,7 @@ List *getNextNodeList(List * node)
  */
 int getIndexList(List * node)
 {
-  return ((node == NULL) ? NULL : node->index);
+  return ((node == NULL) ? 0 : node->index);
 }
 
 /*
@@ -140,9 +140,18 @@ void insertNextNodeList(List * node, List *next)
  *  Return value:
  *    Returns void.
  */
-void assignIndexList(List * node, int i, int cost)
+List *createEdge(int i, float cost)
 {
-	node->index = i;
-	node->custo=cost;
-	return;
+	List *l;
+	l = initList();
+	l = (List *) malloc(sizeof(List));
+	if (l == NULL)
+	{
+		printf("Não foi possivel alocar memoria\n");
+		exit(1);
+	}
+	l->index = i;
+	l->custo=cost;
+	l->next = NULL;
+	return l;
 }

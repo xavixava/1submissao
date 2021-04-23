@@ -14,16 +14,20 @@ typedef struct NodeStruct Location;
 typedef struct Vector Node;
 
 Graph *GRAPHinit(int v);
-void GRAPHinsertE(Graph *g, int index, int adj, int custo);
+void GRAPHinsertE(Graph *g, int index, int adj, float custo);
 void GRAPHremoveE(Graph *g, int i, int index);
 void GRAPHdestroy(Graph *g);
 void GRAPHaddV(Graph *g, int localidade, char *interesse);
 
-int modoA0 (Graph *g, int v, int k);
+int modoC0 (Graph *g, int v, int k);
 int vizinho(Graph *g, int v, int *visited, int maxstage, int stage);
 int modoD0(Graph *g, int v, int k);
 void adjacencia(Graph *g, int v, int *visited, int maxstage, int stage);
 
-/*Item getItemList(Node *node);*/
+int getV(Graph *g);
+int getE(Graph *g);
+
+Graph *readmaps(FILE* fpmaps);
+
 
 #endif

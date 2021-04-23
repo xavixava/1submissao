@@ -84,8 +84,6 @@ List * initList(void);
  */
 int lengthList(List * first);
 
-
-
 /*
  *  Function:
  *    getNextNodeLinkedList
@@ -106,63 +104,9 @@ List * getNextNodeList(List * node);
 
 int getIndexList(List * node);
 
-void insertDataList(List * node, List *next, int index);
+void insertNextNodeList(List * node, List *next);
 
-
-/*
- *  Function:
- *    insertUnsortedLinkedList
- *
- *  Description:
- *    Creates a new linked list node.
- *
- *  Arguments:
- *    Item to associate to the new node:
- *      Item this
- *    Pointer to the next node:
- *      (LinkedList *) next
- *
- *  Return value:
- *    Returns the pointer to the new node.
- */
-/*List * insertUnsortedList(List * next, Item this);
-
-
-
-/*
- *  Function:
- *    InsertSortedLinkedList
- *
- *  Description:
- *    Inserts an item in order in an sorted linked list.
- *
- *  Arguments:
- *    Pointer to the first node of a sorted linked list:
- *        (LinkedList *) first
- *    Pointer to item to be inserted:
- *        Item item
- *    Pointer to function to compare two items:
- *        int comparisonItemFnt(void * item1, void * item2)
- *
- *        This function returns a value less, equal, or greater
- *       than zero if item1 compares less, equal, or greater than
- *       item2, respectively.
- *
- *    Pointer to integer to write error return value:
- *        (int *) err
- *
- *        0 upon sucess, 1 in case the item is NULL, and 2 in
- *   case of memory allocation failure.
- *
- *  Return value:
- *    Returns the pointer to the first node of the sorted linked list.
- */
-/*List * insertSortedList(List * first,
-                           Item item,
-                           int (* comparisonItemFnt)
-                           (Item item1, Item item2),
-                           int * err);
-
+List *createEdge(int i, float cost);
 
 /* End of: Protect multiple inclusions                              */
 #endif

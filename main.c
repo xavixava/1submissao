@@ -4,7 +4,6 @@
 
 #include "main.h"
 
-#define MAX_LINHA 30
 
 int main(int argc, char **argv){
 	
@@ -49,23 +48,37 @@ int main(int argc, char **argv){
 
     mapfile = Openfile(mapsname, "r");
 	probfile = Openfile(probsname, "r");
-	
-	readprbs(probfile, prob, map);
-	
-    g = readmaps(mapfile, prob, map);
 
-    saida = NULL;
-    saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
+	saida = NULL;
+	saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
+	if (saida == NULL)
+	{
+		printf("Não foi possivel alocar memoria\n");
+		exit(1);
+	}
 	saida = strcat((strncpy(saida, mapsname, (strlen(mapsname)-5))), ".queries");
 
 	out = Openfile(saida, "w+");
+	fprintf(out, "%s %s %s/n", argv[1], argv[2], argv[3]);
 
-	fprintf(out, "Hello world \n");
+	do
+	{
+	
+		g = readmaps(mapfile);
+		
+		do
+		{
+	
+			readprbs(probfile, g, out, prob);
+	
+		}while(prob==1 && !feof(probfile));
+		
+		GRAPHdestroy(g);
+		
+	}while((map==1) && (!feof(mapfile)));
 
 	free(saida);
 
-	GRAPHdestroy(g);
-	
 	fclose(out);
 	fclose(probfile);
 	fclose(mapfile);
@@ -73,115 +86,74 @@ int main(int argc, char **argv){
 	return 0;
 }
 
+/*
+ *  Function:
+ *    initList
+ *
+ *  Description:
+ *    Initializes a new linked list.
+ *
+ *  Arguments:
+ *    None
+ *
+ *  Return value:
+ *    Returns the pointer to a new linked list.
+ */
+
 FILE *Openfile(char *filename, char *mode)
 {
    FILE *fp;
 
    fp = fopen(filename, mode);
 
-
-
    if (fp == NULL) {
       fprintf(stderr, "Error: Unable to open file '%s'\n", filename);
        exit(1);
    }
 
-
-
    return fp;
 }
 
 
-void readprbs(FILE* fpprobs, int prob, int map){
+void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
 
     char modo[2];
-    int edge1=0, edge2=0, variante=0, k;
+    int edge1=0, edge2=0, k;
 
+	k=fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2);
+	if (k==2){
+		/*modoA0();*/     /*Chama aqui a funçao*/
+        printf("%s %d %d\n", modo, edge1, edge2);
 
-    while(!feof(fpprobs)){
+    }else if(k==3){
 
-       if (fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2)==2){
+        if((strcmp("B0",modo))==0){
+			/*modoB0();*/     /*Chama aqui a funçao*/
+            printf("%s %d %d\n", modo, edge1, edge2);
 
-           variante=1;
-           printf("%s %d %d\n", modo, edge1, edge2);
-
-        }else if(fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2)==3){
-
-
-            if(!strcmp("B0",modo)){
-
-                variante=2;
-                printf("%s %d %d\n", modo, edge1, edge2);
-
-            }else if(!strcmp("C0",modo)){
-
-                k=edge2;
-                variante=3;
-                printf("%s %d %d\n", modo, edge1, edge2);
-
-            }else if(!strcmp("D0",modo)){
-
-                k=edge2;
-                variante=4;
-                printf("%s %d %d\n", modo, edge1, edge2);
-            }
-        }
+        }else if((strcmp("C0", modo))==0){
+			if(edge2>0){
+				printf("%s %d %d\n", modo, edge1, edge2);
+				k = modoC0(g, edge1, edge2);
+				printf(" %d", k);
+			}
+			else{
+				k = 0;
+			}
+				fprintf(out, "\n%d %d %s %d %d %d", getV(g), getE(g), modo, edge1, edge2, k);
+        }else if((strcmp("D0",modo))==0){
+			if(edge2>0){
+				printf("%s %d %d\n", modo, edge1, edge2);
+				k = modoD0(g, edge1, edge2);
+				printf(" %d", k);
+			}
+			else{
+				k = 0;
+			}
+			fprintf(out, "\n%d %d %s %d %d %d", getV(g), getE(g), modo, edge1, edge2, k);
+		}
+    }
         /* */
 
-        if(prob==1) break;
-    }
-
     return;
-}
-
-Graph *readmaps(FILE* fpmaps, int prob, int map){
-
-	Graph *g;
-    int n_vertices, n_arestas, countv=0, counta=0;
-    float custos;
-    char auxc[MAX_LINHA], *classificador;
-    int edge1, edge2;
-
-    while(!feof(fpmaps)){
-
-		
-        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
-		
-		g = GRAPHinit(n_vertices);
-		
-        printf(" ** %d %d \n", n_vertices , n_arestas);
-
-         while(countv!=n_vertices){
-
-            fscanf(fpmaps, "%d %s", &edge1, auxc);
-
-
-            if(!strcmp("-",auxc)){
-
-                classificador=NULL;
-
-            }else{
-
-                classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
-                strcpy(classificador, auxc);
-                }
-			GRAPHaddV(g, edge1, classificador);
-            countv++;
-            printf("%d %s\n", edge1, classificador);
-         }
-
-         while(counta!=n_arestas){
-
-            fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
-            counta++;
-			GRAPHinsertE(g, edge1, edge2, custos);
-			GRAPHinsertE(g, edge2, edge1, custos);
-            printf("%d %d %f\n", edge1, edge2, custos);
-
-         }
-
-    if(map==0)  break;
-
-    }
-	return g;
 }

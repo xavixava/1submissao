@@ -1,8 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include <string.h>
 
 #include"graph.h"
-#include"list.h"
+
+#define MAX_LINHA 30
 
 /*	Data Type: Graph
  *  Description: Structure with:
@@ -29,17 +31,6 @@ struct NodeStruct
 	List *next;
 };
 
-/*  Data Type: Node
- *  Description: Structure with:
- *      1) Item (possibly pointer to data)
- *      2) Pointer to next node of the list.
- *
-struct Vector
-{
-	Item this;
-    List *next;
-};*/
-
 /*
  *  Function:
  *    GRAPHinit
@@ -62,14 +53,21 @@ Graph *GRAPHinit(int v)
 	Location **vector;
 	
 	g = (Graph *) malloc(sizeof(Graph)); 
-	
-	if(g == NULL) return NULL;
+	if (g == NULL)
+	{
+		printf("Não foi possivel alocar memoria\n");
+		exit(1);
+	}
 	
 	(*g).v = v;
 	g->e = 0;
 	
 	vector = NULL;
 	vector = (Location **) malloc(v*sizeof(Location*));
+	if (vector == NULL){
+		printf("Não foi possivel alocar memoria\n");
+		exit(1);
+	}
 	*vector = NULL;
 	g->vector = vector;
 	
@@ -79,32 +77,35 @@ Graph *GRAPHinit(int v)
 void GRAPHaddV(Graph *g, int localidade, char *interesse)
 {	
 	Location *n;
-	if(localidade < (*g).v){
+	if(localidade <= (*g).v){
 		n = (Location *) malloc(sizeof(Location));
+		if (n == NULL){
+		printf("Não foi possivel alocar memoria\n");
+		exit(1);
+		}
 		n -> localidade = localidade;
 		n -> interesse = interesse;
 		n -> next = initList();
-		(*g).vector[localidade];
+		(*g).vector[localidade-1]=n;
 		return;
 	}
 	printf("Localidade inexistente");
 	return;
 }
 
-void GRAPHinsertE(Graph *g, int index, int adj, int custo)
+void GRAPHinsertE(Graph *g, int index, int adj, float custo)
 {
 	List *n, *l;
 	n = initList();
 	l = initList();
-	l = (List *) malloc(2*sizeof(int)+sizeof(List*));
-	assignIndexList(l, adj, custo);	
+	l = createEdge(adj, custo);	
 	if(g->vector[index-1]->next != NULL) n = g->vector[index-1]->next;
 	else
 	{
 		g->vector[index-1]->next = l;
 		return;
 	}
-	while (getNextNodeList(n) != NULL) getNextNodeList(n);
+	while (getNextNodeList(n) != NULL) n = getNextNodeList(n);
 	insertNextNodeList(n, l);
 	g->e++;
 	
@@ -132,19 +133,22 @@ void GRAPHdestroy(Graph *g)
 {
 	List *n, *p;
 	int i = 0;
-	
-	for(i = 0; i < g->v; i++, free(g->vector[i]->interesse))
+
+	for(i = 0; i < g->v; i++)
 	{
-		p = g->vector[i]->next;
-		n = p;
-		while(getNextNodeList(n)!=NULL){
-			n = getNextNodeList(n);
+		if(g->vector[i]->next!=NULL){
+			p = g->vector[i]->next;
+			n = p;
+			while(getNextNodeList(n)!=NULL){
+				free(n);
+				p = getNextNodeList(n);
+				g->e--;
+				n = p;
+			}
 			free(n);
 			g->e--;
-			p = n;
 		}
-		free(n);
-		g->e--;
+		free(g->vector[i]->interesse);
 	}
 	if(g->e==0)	free(g->vector);
 	else exit(1);
@@ -194,13 +198,13 @@ int modoC0 (Graph *g, int v, int k)
 
 int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
 {
-	int a;
 	List *l = g->vector[v-1]->next;
 	visited[v-1] = 1;
 	if(stage == maxstage-1) return((visited[v-1] == 0) ? 1 : 0);
 	while(getNextNodeList(l)!=NULL)
 	{
 		if(visited[(getIndexList(l))-1] == 0) if(vizinho(g, getIndexList(l), visited, maxstage, stage++)==1) return 1;
+		l = getNextNodeList(l);
 	}
 	return 0;
 }
@@ -228,4 +232,64 @@ void adjacencia(Graph *g, int v, int *visited, int maxstage, int stage)
 	}
 	return;
 
+}
+
+int getV(Graph *g)
+{
+	return ((g == NULL) ? -1 : g->v);
+}
+
+int getE(Graph *g)
+{
+	return ((g == NULL) ? 0 : g->e);
+}
+
+Graph *readmaps(FILE* fpmaps){
+
+	Graph *g;
+    int n_vertices, n_arestas, countv=0, counta=0;
+    float custos;
+    char auxc[MAX_LINHA], *classificador;
+    int edge1, edge2;
+	
+        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
+		
+		g = GRAPHinit(n_vertices);
+		
+        printf(" ** %d %d \n", n_vertices , n_arestas);
+
+         while(countv!=n_vertices){
+
+            fscanf(fpmaps, "%d %s", &edge1, auxc);
+
+
+            if(!strcmp("-",auxc)){
+
+                classificador=NULL;
+
+            }else{
+
+                classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
+				if (classificador == NULL){
+				printf("Não foi possivel alocar memoria\n");
+				exit(1);
+				}
+                strcpy(classificador, auxc);
+                }
+			GRAPHaddV(g, edge1, classificador);
+            countv++;
+            printf("%d %s\n", edge1, classificador);
+         }
+
+         while(counta!=n_arestas){
+
+            fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
+            counta++;
+			GRAPHinsertE(g, edge1, edge2, custos);
+			GRAPHinsertE(g, edge2, edge1, custos);
+            printf("%d %d %f\n", edge1, edge2, custos);
+
+         }
+
+	return g;
 }
