@@ -181,7 +181,7 @@ float modoB0(Graph *g,int v1,int v2){
 
     List *l;
 
-    if((v1>g->v)||(v1<g->v)||(v1>g->v)||(v1<g->v)){
+    if((v1>g->v)||(v1<1)||(v2>g->v)||(v2<1)){
 
         return -1;
     }
@@ -194,7 +194,7 @@ float modoB0(Graph *g,int v1,int v2){
         return getCustoList(l);
 
         }
-        getNextNodeList(l);
+        l=getNextNodeList(l);
     }
 
     return -1;
