@@ -230,7 +230,7 @@ void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage
 		if(visited[v-1]==0)adj[v-1] = 1;
 		return;
 	}
-	visited[v-1] = 1; ZE MONTANELAS
+	visited[v-1] = 1; 
 	while(getNextNodeList(l)!=NULL)
 	{
 		if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, adj, maxstage, stage+1);
