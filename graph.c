@@ -274,10 +274,11 @@ Graph *readmaps(FILE* fpmaps){
     char auxc[MAX_LINHA], *classificador;
     int edge1, edge2;
 	
-        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2) ;
-		
-		g = GRAPHinit(n_vertices, n_arestas);
-		
+        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2)	g = GRAPHinit(n_vertices, n_arestas);
+		else {
+			printf("Algo deu errado ao ler ficheiro\n");
+			exit(1);
+			}
         printf(" ** %d %d \n", n_vertices , n_arestas);
 
          while(countv!=n_vertices){
