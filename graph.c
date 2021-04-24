@@ -179,59 +179,26 @@ printf(" %d %d",g->v, g->e);
 
 float modoB0(Graph *g,int v1,int v2){
 
-    int i=0;
     List *l;
 
-    while(i<g->v){
-
-        if((g->vector[i]->localidade==v1)||(g->vector[i]->localidade==v1)) break;
-        i++;
-    }
-
-    if(i==g->v){
+    if((v1>g->v)||(v1<g->v)||(v1>g->v)||(v1<g->v)){
 
         return -1;
     }
 
+    l=g->vector[v1-1]->next;
 
-    printf(" lala %d\n", i);
-    printf(" lala %d\n", g->v);
-    printf(" lala %d\n", g->vector[i]->localidade);
-    printf(" lala %d\n", v1);
-    printf(" lala %d\n", v2);
+    while(l!=NULL){
 
-    l = g->vector[i]->next;
+        if(getIndexList(l) == v2 ){
+        return getCustoList(l);
 
-    printf("lala gegdav %d", getIndexList(l) );
-
-    printf("lala gegadv %f", getCustoList(l));
-
-    if(g->vector[i]->localidade==v1){
-
-        while(l!=NULL){
-
-            if(getIndexList(l) == v2 ){
-            return getCustoList(l);
-
-            }
-            getNextNodeList(l);
-        } /*
-
-    }else if(g->vector[i]->localidade==v2){
-
-        while(l!=NULL){
-
-            if(getIndexList(l) == v1 ){
-            return getCustoList(l);
-
-            }
-            getNextNodeList(l);
-        }*/
+        }
+        getNextNodeList(l);
     }
 
     return -1;
 }
-
 
 /*
  *  Function:
