@@ -12,6 +12,6 @@
  */
 FILE *Openfile(char *name, char *mode);
 
-void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob);
+char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo);
 
 #endif

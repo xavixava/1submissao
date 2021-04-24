@@ -7,9 +7,12 @@
 int main(int argc, char **argv){
 	
 	Graph *g;
-	int map, prob, i = 0, l;
-	char *probsname = argv[2], *mapsname = argv[3], *saida;
+	int map, prob, i = 0, l, edge1=0, edge2=0;
+	char *probsname = argv[2], *mapsname = argv[3], *saida, *modo;
 	FILE *mapfile, *probfile, *out;
+	float b;
+	
+	modo = (char*) malloc(3*sizeof(char));
 
 	if (argc == 4){
 
@@ -64,24 +67,110 @@ int main(int argc, char **argv){
 	free(saida);
 	fprintf(out, "%s %s %s\n", argv[1], argv[2], argv[3]);
 
-	do
-    {
+	if ((map==1) && (prob==1)){
+		do{
+			g = readmaps(mapfile);
+			do{
+				modo = readprbs(probfile, g, out, modo);
+				switch(modo[0]){
+				case 'D':
+					fscanf(probfile, " %d %d", &edge1, &edge2);
+					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					else
+					{
+						if((edge2>=0)){
+						printf("%s %d %d\n", modo, edge1, edge2);
+						l = modoD0(g, edge1, edge2);
+						}
+						else{
+						l = 0;
+						}
+					}
+					fprintf(out, "%d %d %d\n", edge1, edge2, l);
+				break;
+				case 'A':
+					l=modoA0(g, edge1);
+					fprintf(out, "%d %d\n", edge1, l);
+				break;
+				case 'B':
+					b = modoB0(g, edge1, edge2);
+					fprintf(out, "%d %d %f\n", edge1, edge2, b);
+				break;
+				case 'C':
+					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					else
+					{
+						if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
+							l = modoC0(g, edge1, edge2);
+						}
+						else{
+							l = 0;
+						}
+					}
+					fprintf(out, "%d %d %d\n",edge1, edge2, l);
+				break;
+			}
+			}while(feof(probfile)==0);
+			fseek(probfile, 0, SEEK_SET);
+			GRAPHdestroy(g);
+		}while(feof(mapfile)==0);
+	}
+	else{
+		do
+		{
+			if(map!=-1)g = readmaps(mapfile);
+			if(g==NULL) break;
+			
+			if(prob!=-1)modo = readprbs(probfile, g, out, modo);
+			if(feof(probfile) !=0 || prob == 0)prob = -1;
 
-        g = readmaps(mapfile);
+			switch(modo[0]){
+				case 'D':
+					fscanf(probfile, " %d %d", &edge1, &edge2);
+					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					else
+					{
+						if((edge2>=0)){
+						printf("%s %d %d\n", modo, edge1, edge2);
+						l = modoD0(g, edge1, edge2);
+						}
+						else{
+						l = 0;
+						}
+					}
+					fprintf(out, "%d %d %d\n", edge1, edge2, l);
+				break;
+				case 'A':
+					l=modoA0(g, edge1);
+					fprintf(out, "%d %d\n", edge1, l);
+				break;
+				case 'B':
+					b = modoB0(g, edge1, edge2);
+					fprintf(out, "%d %d %f\n", edge1, edge2, b);
+				break;
+				case 'C':
+					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					else
+					{
+						if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
+							l = modoC0(g, edge1, edge2);
+						}
+						else{
+							l = 0;
+						}
+					}
+					fprintf(out, "%d %d %d\n",edge1, edge2, l);
+				break;
+			}
+			
+			if (map!=-1)GRAPHdestroy(g);
+			if(map==0)map = -1;
 
-        if (g==NULL) break;
-
-        do
-        {
-
-            readprbs(probfile, g, out, prob);
-
-        }while((prob==1) && (!feof(probfile)));
-
-        GRAPHdestroy(g);
-
-    }while((map==1) && (!feof(mapfile)));
-
+		}while((map!=-1) || (prob!=-1));
+	}
+	
+	free(modo);
+	
 	fclose(out);
 	fclose(probfile);
 	fclose(mapfile);
@@ -118,58 +207,9 @@ FILE *Openfile(char *filename, char *mode)
 }
 
 
-void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
+char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo){
 
-    char modo[2];
-    int edge1=0, edge2=0, k, count;
-    float l;
-
-	k=fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2);
-	if (k==2){
-		count=modoA0(g, edge1); /*modoA0();*/     /*Chama aqui a funçao*/
-		fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, count );
-        printf("%s %d %d\n", modo, edge1, edge2);
-        
-
-    }else if(k==3){
-
-        if((strcmp("B0",modo))==0){
-			/*modoB0();*/     /*Chama aqui a funçao*/
-			l=modoB0(g, edge1, edge2);
-			fprintf(out, "\n%d %d %s %d %d %f\n", getV(g), getE(g), modo, edge1, edge2, l);
-            printf("%s %d %d\n", modo, edge1, edge2);
-
-        }else if((strcmp("C0", modo))==0){
-			if((edge1<=0)||(edge1 > getV(g)))k=-1;
-			else
-			{
-				if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
-					printf("%s %d %d\n", modo, edge1, edge2);
-					k = modoC0(g, edge1, edge2);
-					printf(" %d", k);
-				}
-				else{
-					k = 0;
-				}
-			}
-				fprintf(out, "\n%d %d %s %d %d %d", getV(g), getE(g), modo, edge1, edge2, k);
-        }else if((strcmp("D0",modo))==0){
-			if((edge1<=0)||(edge1 > getV(g)))k=-1;
-			else
-			{
-				if(edge2>=0){
-					printf("%s %d %d\n", modo, edge1, edge2);
-					k = modoD0(g, edge1, edge2);
-					printf(" %d", k);
-				}
-				else{
-					k = 0;
-				}
-			}
-			fprintf(out, "\n%d %d %s %d %d %d \n", getV(g), getE(g), modo, edge1, edge2, k);
-		}
-    }
-        /* */
-
-    return;
+	fscanf(fpprobs, "%s", modo);
+	fprintf(out, "\n%d %d %s ", getV(g), getE(g), modo);
+	return modo;
 }
