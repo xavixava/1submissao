@@ -150,7 +150,7 @@ void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
 			if((edge1<=0)||(edge1 > getV(g)))k=-1;
 			else
 			{
-				if(edge2>0){
+				if(edge2>=0){
 					printf("%s %d %d\n", modo, edge1, edge2);
 					k = modoD0(g, edge1, edge2);
 					printf(" %d", k);

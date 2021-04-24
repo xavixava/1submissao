@@ -200,13 +200,17 @@ int modoC0 (Graph *g, int v, int k)
 int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
 {
 	List *l = g->vector[v-1]->next;
-	visited[v-1] = 1;
-	if(stage == maxstage) return((visited[v-1] == 1) ? 1 : 0);
+	int i;
+	if(stage == maxstage) return((visited[v-1] > 0) ? 1 : 0);
+	visited[v-1] = -1;
 	while(getNextNodeList(l)!=NULL)
 	{
-		if(visited[(getIndexList(l))-1] == 0) if(vizinho(g, getIndexList(l), visited, maxstage, ++stage)==1) return 1;
+		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
-	}
+	} 
+	if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
+	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))if(vizinho(g, getIndexList(l), visited, maxstage, stage)==1) return 1;
+	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0)) if(vizinho(g, getIndexList(l), visited, maxstage, stage + 1)==1) return 1;
 	return 0;
 }
 
@@ -228,27 +232,26 @@ void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage
 	int i;
 	List *l = g->vector[v-1]->next;
 	if(stage == maxstage){
-		if(visited[v-1] == 0){
+		if(visited[v-1] == maxstage){
 			adj[v-1] = 1;
-			printf("\n%d\n", v);
-		return;
+			return;
 		}
 		else {
-			visited[v-1] = 1;
+			visited[v-1] = -1;
 			return;
 			}
 	}
 	visited[v-1]=-1;
 	while(getNextNodeList(l)!=NULL)
 	{
-		if((visited[(getIndexList(l))-1])==0){
-		visited[(getIndexList(l))-1] = 1;
-	    printf("\nvisited %d\n", (getIndexList(l)));
-		}
+		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
 	}
-	visited[(getIndexList(l))-1]=1;
-	for(i = 0; i < g->v; i++)if(visited[i] == stage)adjacencia(g, i+1, visited, adj, maxstage, stage+1);
+	if((visited[(getIndexList(l))-1])==0){
+		visited[(getIndexList(l))-1] = stage + 1;
+		}
+	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))adjacencia(g, i+1, visited, adj, maxstage, stage);
+	for(i = 0; i < g->v; i++)if(visited[i] == stage + 1)adjacencia(g, i+1, visited, adj, maxstage, stage+1);
 	return;
 
 }
