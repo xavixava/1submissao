@@ -112,7 +112,7 @@ int main(int argc, char **argv){
 			}
 			}while(feof(probfile)==0);
 			fseek(probfile, 0, SEEK_SET);
-			GRAPHdestroy(g);
+			if(g!=NULL)GRAPHdestroy(g);
 		}while(feof(mapfile)==0);
 	}
 	else{
