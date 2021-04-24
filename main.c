@@ -65,20 +65,22 @@ int main(int argc, char **argv){
 	fprintf(out, "%s %s %s\n", argv[1], argv[2], argv[3]);
 
 	do
-	{
-	
-		g = readmaps(mapfile);
-		
-		do
-		{
-	
-			readprbs(probfile, g, out, prob);
-	
-		}while((prob==1) && (!feof(probfile)));
-		
-		GRAPHdestroy(g);
-		
-	}while((map==1) && (!feof(mapfile)));
+    {
+
+        g = readmaps(mapfile);
+
+        if (g==NULL) break;
+
+        do
+        {
+
+            readprbs(probfile, g, out, prob);
+
+        }while((prob==1) && (!feof(probfile)));
+
+        GRAPHdestroy(g);
+
+    }while((map==1) && (!feof(mapfile)));
 
 	fclose(out);
 	fclose(probfile);
@@ -119,17 +121,22 @@ FILE *Openfile(char *filename, char *mode)
 void readprbs(FILE* fpprobs, Graph *g, FILE *out, int prob){
 
     char modo[2];
-    int edge1=0, edge2=0, k;
+    int edge1=0, edge2=0, k, count;
+    float l;
 
 	k=fscanf(fpprobs, "%s %d %d", modo, &edge1, &edge2);
 	if (k==2){
-		/*modoA0();*/     /*Chama aqui a funçao*/
+		count=modoA0(g, edge1); /*modoA0();*/     /*Chama aqui a funçao*/
+		fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, count );
         printf("%s %d %d\n", modo, edge1, edge2);
+        
 
     }else if(k==3){
 
         if((strcmp("B0",modo))==0){
 			/*modoB0();*/     /*Chama aqui a funçao*/
+			l=modoB0(g, edge1, edge2);
+			fprintf(out, "\n%d %d %s %d %d %f\n", getV(g), getE(g), modo, edge1, edge2, l);
             printf("%s %d %d\n", modo, edge1, edge2);
 
         }else if((strcmp("C0", modo))==0){

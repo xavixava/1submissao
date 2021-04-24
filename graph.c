@@ -157,6 +157,82 @@ void GRAPHdestroy(Graph *g)
 	return;
 }
 
+
+int modoA0(Graph *g, int v){
+
+    int i, count;
+printf(" %d %d",g->v, g->e);
+
+    if((v<1)||(v>g->v)){
+        return -1;
+    }else{
+
+        for(i=0; i<=g->v; i++) {
+            if(g->vector[i]->localidade==v) break;
+        }
+    }
+
+    count=lengthList(g->vector[i]->next);
+    return count;
+}
+
+
+float modoB0(Graph *g,int v1,int v2){
+
+    int i=0;
+    List *l;
+
+    while(i<g->v){
+
+        if((g->vector[i]->localidade==v1)||(g->vector[i]->localidade==v1)) break;
+        i++;
+    }
+
+    if(i==g->v){
+
+        return -1;
+    }
+
+
+    printf(" lala %d\n", i);
+    printf(" lala %d\n", g->v);
+    printf(" lala %d\n", g->vector[i]->localidade);
+    printf(" lala %d\n", v1);
+    printf(" lala %d\n", v2);
+
+    l = g->vector[i]->next;
+
+    printf("lala gegdav %d", getIndexList(l) );
+
+    printf("lala gegadv %f", getCustoList(l));
+
+    if(g->vector[i]->localidade==v1){
+
+        while(l!=NULL){
+
+            if(getIndexList(l) == v2 ){
+            return getCustoList(l);
+
+            }
+            getNextNodeList(l);
+        } /*
+
+    }else if(g->vector[i]->localidade==v2){
+
+        while(l!=NULL){
+
+            if(getIndexList(l) == v1 ){
+            return getCustoList(l);
+
+            }
+            getNextNodeList(l);
+        }*/
+    }
+
+    return -1;
+}
+
+
 /*
  *  Function:
  *    modoC0
@@ -266,53 +342,57 @@ int getE(Graph *g)
 	return ((g == NULL) ? 0 : g->e);
 }
 
-Graph *readmaps(FILE* fpmaps){
+Graph *readmaps(FILE * fpmaps){
 
-	Graph *g;
-    int n_vertices, n_arestas, countv=0, counta=0;
+    Graph *g;
+    int n_vertices=0, n_arestas=0, countv=0, counta=0;
     float custos;
     char auxc[MAX_LINHA], *classificador;
     int edge1, edge2;
-	
-        if(fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas)==2)	g = GRAPHinit(n_vertices, n_arestas);
-		else {
-			printf("Algo deu errado ao ler ficheiro\n");
-			exit(1);
-			}
+
+        counta = fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas);
         printf(" ** %d %d \n", n_vertices , n_arestas);
 
-         while(countv!=n_vertices){
+        if(counta==2) g = GRAPHinit(n_vertices, n_arestas);
+        else {
+            printf("Algo deu errado ao ler ficheiro\n");
+            return NULL;
+            }
+
+        counta=0;
+
+        while(countv < n_vertices){
 
             fscanf(fpmaps, "%d %s", &edge1, auxc);
 
 
-            if((strcmp("-",auxc))!=0){
-           
-				classificador=NULL;
-				
+            if((strcmp("-",auxc))==0){
+
+                classificador=NULL;
+
             }else{
 
                 classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
-				if (classificador == NULL){
-				printf("Não foi possivel alocar memoria\n");
-				exit(1);
-				}
+                if (classificador == NULL){
+                printf("Não foi possivel alocar memoria\n");
+                exit(1);
+                }
                 strcpy(classificador, auxc);
                 }
-			GRAPHaddV(g, edge1, classificador);
+            GRAPHaddV(g, edge1, classificador);
             countv++;
             printf("%d %s\n", edge1, classificador);
          }
 
-         while(counta!=n_arestas){
+         while(counta < n_arestas){
 
             fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
             counta++;
-			GRAPHinsertE(g, edge1, edge2, custos);
-			GRAPHinsertE(g, edge2, edge1, custos);
+            GRAPHinsertE(g, edge1, edge2, custos);
+            GRAPHinsertE(g, edge2, edge1, custos);
             printf("%d %d %f\n", edge1, edge2, custos);
 
          }
 
-	return g;
+    return g;
 }

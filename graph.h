@@ -19,6 +19,8 @@ void GRAPHremoveE(Graph *g, int i, int index);
 void GRAPHdestroy(Graph *g);
 void GRAPHaddV(Graph *g, int localidade, char *interesse);
 
+int modoA0(Graph *g, int v);
+float modoB0(Graph *g,int edge1,int edge2);
 int modoC0 (Graph *g, int v, int k);
 int vizinho(Graph *g, int v, int *visited, int maxstage, int stage);
 int modoD0(Graph *g, int v, int k);

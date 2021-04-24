@@ -108,5 +108,8 @@ void insertNextNodeList(List * node, List *next);
 
 List *createEdge(int i, float cost);
 
+
+float getCustoList(List * node);
+
 /* End of: Protect multiple inclusions                              */
 #endif

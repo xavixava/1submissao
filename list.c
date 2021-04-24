@@ -82,6 +82,13 @@ List *getNextNodeList(List * node)
   return ((node->next == NULL) ? NULL : node->next);
 }
 
+
+
+float getCustoList(List * node){
+
+    return ((node == NULL) ? -1 : node->custo);
+}
+
 /*
  *  Function:
  *    getIndexList
