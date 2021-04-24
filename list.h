@@ -106,7 +106,7 @@ int getIndexList(List * node);
 
 void insertNextNodeList(List * node, List *next);
 
-List *createEdge(int i, float cost);
+List *createEdge(int i, double cost);
 
 
 float getCustoList(List * node);

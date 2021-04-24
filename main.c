@@ -10,7 +10,7 @@ int main(int argc, char **argv){
 	int map, prob, i = 0, l, edge1=0, edge2=0;
 	char *probsname = argv[2], *mapsname = argv[3], *saida, *modo;
 	FILE *mapfile, *probfile, *out;
-	float b;
+	double b;
 	
 	modo = (char*) malloc(3*sizeof(char));
 

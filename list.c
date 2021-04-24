@@ -13,7 +13,7 @@
 struct ListStruct
 {
     int index;
-	float custo;
+	double custo;
     List *next;
 };
 
@@ -148,7 +148,7 @@ void insertNextNodeList(List * node, List *next)
  *    Returns void.
  */
 
-List *createEdge(int i, float cost)
+List *createEdge(int i, double cost)
 {
 	List *l;
 	l = initList();

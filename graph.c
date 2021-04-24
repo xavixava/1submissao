@@ -93,7 +93,7 @@ void GRAPHaddV(Graph *g, int localidade, char *interesse)
 	return;
 }
 
-void GRAPHinsertE(Graph *g, int index, int adj, float custo)
+void GRAPHinsertE(Graph *g, int index, int adj, double custo)
 {
 	List *n, *l;
 	n = initList();
@@ -161,7 +161,7 @@ void GRAPHdestroy(Graph *g)
 int modoA0(Graph *g, int v){
 
     int i, count;
-printf(" %d %d",g->v, g->e);
+	printf(" %d %d",g->v, g->e);
 
     if((v<1)||(v>g->v)){
         return -1;
@@ -177,7 +177,7 @@ printf(" %d %d",g->v, g->e);
 }
 
 
-float modoB0(Graph *g,int v1,int v2){
+double modoB0(Graph *g,int v1, int v2){
 
     List *l;
 
@@ -313,7 +313,7 @@ Graph *readmaps(FILE * fpmaps){
 
     Graph *g;
     int n_vertices=0, n_arestas=0, countv=0, counta=0;
-    float custos;
+    double custos;
     char auxc[MAX_LINHA], *classificador;
     int edge1, edge2;
 
@@ -353,7 +353,7 @@ Graph *readmaps(FILE * fpmaps){
 
          while(counta < n_arestas){
 
-            fscanf(fpmaps, "%d %d %f", &edge1, &edge2, &custos);
+            fscanf(fpmaps, "%d %d %lf", &edge1, &edge2, &custos);
             counta++;
             GRAPHinsertE(g, edge1, edge2, custos);
             GRAPHinsertE(g, edge2, edge1, custos);
