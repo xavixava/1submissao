@@ -31,7 +31,7 @@ int main(int argc, char **argv){
 			}
 		}
 		i++;
-	}void solve();
+	}
 
 	i=0;
 	while (i <= (strlen(mapsname)-5)){ /* verificação da extensão do ficheiro maps(possivelmente desnecessário) */

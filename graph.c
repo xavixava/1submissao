@@ -225,20 +225,30 @@ int modoD0(Graph *g, int v, int k)
 
 void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage)
 {
+	int i;
 	List *l = g->vector[v-1]->next;
 	if(stage == maxstage){
-		if(visited[v-1]==0)adj[v-1] = 1;
+		if(visited[v-1] == 0){
+			adj[v-1] = 1;
+			printf("\n%d\n", v);
 		return;
+		}
+		else {
+			visited[v-1] = 1;
+			return;
+			}
 	}
-	visited[v-1] = 1; 
+	visited[v-1]=-1;
 	while(getNextNodeList(l)!=NULL)
 	{
-		if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, adj, maxstage, stage+1);
-		visited[(getIndexList(l))-1] = 0;
+		if((visited[(getIndexList(l))-1])==0){
+		visited[(getIndexList(l))-1] = 1;
+	    printf("\nvisited %d\n", (getIndexList(l)));
+		}
 		l = getNextNodeList(l);
 	}
-	if(visited[(getIndexList(l))-1] == 0) adjacencia(g, getIndexList(l), visited, adj, maxstage, ++stage);
-	visited[(getIndexList(l))-1] = 0;
+	visited[(getIndexList(l))-1]=1;
+	for(i = 0; i < g->v; i++)if(visited[i] == stage)adjacencia(g, i+1, visited, adj, maxstage, stage+1);
 	return;
 
 }

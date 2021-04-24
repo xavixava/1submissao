@@ -140,6 +140,7 @@ void insertNextNodeList(List * node, List *next)
  *  Return value:
  *    Returns void.
  */
+
 List *createEdge(int i, float cost)
 {
 	List *l;
