@@ -163,11 +163,12 @@ int main(int argc, char **argv){
 				break;
 			}
 			
-			if (map!=-1)GRAPHdestroy(g);
+			if (map==1)GRAPHdestroy(g);
 			if(map==0)map = -1;
 
 		}while((map!=-1) || (prob!=-1));
 	}
+	if(g != NULL)GRAPHdestroy(g);
 	
 	free(modo);
 	
