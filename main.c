@@ -141,14 +141,17 @@ int main(int argc, char **argv){
 					fprintf(out, "%d %d %d\n", edge1, edge2, l);
 				break;
 				case 'A':
-					l=modoA0(g, edge1);
+					fscanf(probfile, " %d", &edge1);
+					l = modoA0(g, edge1);
 					fprintf(out, "%d %d\n", edge1, l);
 				break;
 				case 'B':
+					fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
 					fprintf(out, "%d %d %f\n", edge1, edge2, b);
 				break;
 				case 'C':
+					fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
 					else
 					{
