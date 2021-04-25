@@ -70,6 +70,7 @@ int main(int argc, char **argv){
 	if ((map==1) && (prob==1)){
 		do{
 			g = readmaps(mapfile);
+			if(g==NULL)break;
 			do{
 				modo = readprbs(probfile, g, out, modo);
 				switch(modo[0]){
