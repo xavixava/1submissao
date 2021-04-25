@@ -84,7 +84,7 @@ List *getNextNodeList(List * node)
 
 
 
-float getCustoList(List * node){
+double getCustoList(List * node){
 
     return ((node == NULL) ? -1 : node->custo);
 }
