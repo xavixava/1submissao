@@ -17,7 +17,7 @@ void GRAPHaddV(Graph *g, int localidade, char *interesse);
 int modoA0(Graph *g, int v);
 double modoB0(Graph *g,int edge1,int edge2);
 int modoC0 (Graph *g, int v, int k);
-void vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int *flag);
+int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag);
 int modoD0(Graph *g, int v, int k);
 void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage);
 

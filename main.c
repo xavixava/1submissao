@@ -83,7 +83,6 @@ int main(int argc, char **argv){
 					else
 					{
 						if((edge2>=0)){
-						printf("%s %d %d\n", modo, edge1, edge2);
 						l = modoD0(g, edge1, edge2);
 						}
 						else{
@@ -142,7 +141,6 @@ int main(int argc, char **argv){
 					else
 					{
 						if((edge2>=0)){
-						printf("%s %d %d\n", modo, edge1, edge2);
 						l = modoD0(g, edge1, edge2);
 						}
 						else{
@@ -220,7 +218,7 @@ FILE *Openfile(char *filename, char *mode)
 
    if (fp == NULL) {
       fprintf(stderr, "Error: Unable to open file '%s'\n", filename);
-       exit(1);
+       exit(0);
    }
 
    return fp;

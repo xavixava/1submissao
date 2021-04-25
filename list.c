@@ -79,7 +79,7 @@ int lengthList(List *first)
  */
 List *getNextNodeList(List * node)
 {
-  return ((node->next == NULL) ? NULL : node->next);
+  return ((node == NULL) ? NULL : node->next);
 }
 
 
@@ -155,8 +155,8 @@ List *createEdge(int i, double cost)
 	l = (List *) malloc(sizeof(List));
 	if (l == NULL)
 	{
-		printf("Não foi possivel alocar memoria\n");
-		exit(1);
+		/*printf("Não foi possivel alocar memoria\n");*/
+		exit(0);
 	}
 	l->index = i;
 	l->custo=cost;

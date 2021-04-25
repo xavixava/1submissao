@@ -459,11 +459,9 @@ Graph *readmaps(FILE * fpmaps){
     int edge1, edge2;
 
         counta = fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas);
-        printf(" ** %d %d \n", n_vertices , n_arestas);
 
         if(counta==2) g = GRAPHinit(n_vertices, n_arestas);
         else {
-            printf("Algo deu errado ao ler ficheiro\n");
             return NULL;
             }
 
@@ -482,14 +480,13 @@ Graph *readmaps(FILE * fpmaps){
 
                 classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
                 if (classificador == NULL){
-                printf("Não foi possivel alocar memoria\n");
-                exit(1);
+                /*printf("Não foi possivel alocar memoria\n");*/
+                exit(0);
                 }
                 strcpy(classificador, auxc);
                 }
             GRAPHaddV(g, edge1, classificador);
             countv++;
-            printf("%d %s\n", edge1, classificador);
          }
 
          while(counta < n_arestas){
@@ -498,7 +495,6 @@ Graph *readmaps(FILE * fpmaps){
             counta++;
             GRAPHinsertE(g, edge1, edge2, custos);
             GRAPHinsertE(g, edge2, edge1, custos);
-            printf("%d %d %f\n", edge1, edge2, custos);
 
          }
 
