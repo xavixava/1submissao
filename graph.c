@@ -226,8 +226,7 @@ void GRAPHdestroy(Graph *g)
 int modoA0(Graph *g, int v){
 
     int i, count;
-	printf(" %d %d",g->v, g->e);
-
+	
     if((v<1)||(v>g->v)){
         return -1;
     }else{
