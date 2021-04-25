@@ -36,15 +36,15 @@ struct NodeStruct
  *    GRAPHinit
  *
  *  Description:
- *    Allocates memory for the graph.
+ *    Allocates memory and initializes the graph.
  *
  *  Arguments:
- *    Pointer to the first element of a linked list:
- *      (LinkedList *) first
+ *    int v keeping the number of nodes
+ *	  int a keeping the number of edges
  *    
  *
  *  Return value:
- *    None
+ *    Pointer to a new graph
  */
 
 Graph *GRAPHinit(int v, int a)
@@ -74,6 +74,22 @@ Graph *GRAPHinit(int v, int a)
 	return g;
 }
 
+/*
+ *  Function:
+ *    GRAPHaddv
+ *
+ *  Description:
+ *    Allocates memory and initializes the node.
+ *
+ *  Arguments:
+ *    Pointer to the graph
+ *	  int localidade keeping the index of the node
+ *    char* interesse keeping the special something of the location
+ *
+ *  Return value:
+ *    None
+ */
+
 void GRAPHaddV(Graph *g, int localidade, char *interesse)
 {	
 	Location *n;
@@ -93,6 +109,23 @@ void GRAPHaddV(Graph *g, int localidade, char *interesse)
 	return;
 }
 
+/*
+ *  Function:
+ *    GRAPHinsertE
+ *
+ *  Description:
+ *    Allocates memory and places the edge(List).
+ *
+ *  Arguments:
+ *	  Pointer to the graph
+ *    int index keeping the index of the origin node
+ *	  int adj keeping the index of the adjacent node
+ *	  double custo keeping the cost of the edge
+ *
+ *  Return value:
+ *    None
+ */
+
 void GRAPHinsertE(Graph *g, int index, int adj, double custo)
 {
 	List *n, *l;
@@ -111,6 +144,24 @@ void GRAPHinsertE(Graph *g, int index, int adj, double custo)
 	return;
 }
 
+/*
+ *  Function:
+ *    GRAPHremoveE
+ *
+ *	  we ended up not using it
+ *
+ *  Description:
+ *    Destroys an edge that includes its arguments.
+ *
+ *  Arguments:
+ *	  Pointer to the graph
+ *    int i keeping the index of the origin node
+ *	  int index keeping the index of the adjacent node
+ *
+ *  Return value:
+ *    None
+ */
+
 void GRAPHremoveE(Graph *g, int i, int index)
 {
 	List *prev, *next;
@@ -127,6 +178,20 @@ void GRAPHremoveE(Graph *g, int i, int index)
 	g->e--;
 	return;
 }
+
+/*
+ *  Function:
+ *    GRAPHdestroy
+ *
+ *  Description:
+ *    Destroys a graph and frees its memory
+ *
+ *  Arguments:
+ *	  Pointer to the graph
+ *
+ *  Return value:
+ *    None
+ */
 
 void GRAPHdestroy(Graph *g)
 {
@@ -211,6 +276,7 @@ double modoB0(Graph *g,int v1, int v2){
  *    pointer to the graph: g
  *    int keeping the original node: v
  *	  int  keeping the number of stages: k
+ *
  *  Return value:
  *    Returns the pointer to the item of a linked list node. NULL
  *   is returned if the node is NULL (or if the item is NULL).
@@ -218,10 +284,15 @@ double modoB0(Graph *g,int v1, int v2){
  
 int modoC0 (Graph *g, int v, int k)
  { 
-	int a = g->v;
-	int visited[a];
+	int a = g->v, i;
+	int visited[a], adj[a];
 	memset(visited, 0, a*sizeof(int));
-	return vizinho(g, v,visited, k, 0);
+	memset(adj, 0, a*sizeof(int));
+	adjacencia(g, v,visited, adj, k, 0);
+	for(i=0; i < a; i++){
+		if(adj[i]==1)return 1;
+	}
+	return 0;
  }
 
 /*
@@ -235,16 +306,53 @@ int modoC0 (Graph *g, int v, int k)
  *    pointer to the graph: g
  *    int keeping the original node: v
  *	  int  keeping the number of stages
- *  Return value:
- *    Returns the pointer to the item of a linked list node. NULL
- *   is returned if the node is NULL (or if the item is NULL).
+ *  
+ *	  Return value:
+ *    1 if there is a neighbor, 0 if there isn't
  */
 
-int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
+/*void vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int *flag)
 {
 	List *l = g->vector[v-1]->next;
 	int i;
-	if(stage == maxstage) return((visited[v-1] > 0) ? 1 : 0);
+	if(stage == maxstage){
+		if(visited[v-1] == maxstage){
+			*flag=1;
+			return;
+		}
+		else {
+			visited[v-1] = -1;
+			return;
+			}
+	}
+	
+	visited[v-1] = -1;
+	
+	while(getNextNodeList(l)!=NULL)
+	{
+		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
+		l = getNextNodeList(l);
+	} 
+	if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
+	for(i = 0; i < g->v; i++) if((visited[i] == stage) && (stage!=0)) vizinho(g, getIndexList(l), visited, maxstage, stage, flag);
+	for(i = 0; i < g->v; i++) if(visited[i] == stage+1) vizinho(g, getIndexList(l), visited, maxstage, stage + 1, flag);
+	return;
+}/*
+
+/*int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
+{
+	List *l = g->vector[v-1]->next;
+	int i;
+	if(stage == maxstage){
+		if(visited[v-1] == maxstage){
+			*flag=1;
+			return;
+		}
+		else {
+			visited[v-1] = -1;
+			return;
+			}
+	}
 	visited[v-1] = -1;
 	while(getNextNodeList(l)!=NULL)
 	{
@@ -252,10 +360,26 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
 		l = getNextNodeList(l);
 	} 
 	if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
-	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))if(vizinho(g, getIndexList(l), visited, maxstage, stage)==1) return 1;
-	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0)) if(vizinho(g, getIndexList(l), visited, maxstage, stage + 1)==1) return 1;
-	return 0;
-}
+	for(i = 0; i < g->v; i++) if((visited[i] == stage) && (stage!=0)) vizinho(g, getIndexList(l), visited, maxstage, stage, flag);
+	for(i = 0; i < g->v; i++) if(visited[i] == stage+1) vizinho(g, getIndexList(l), visited, maxstage, stage + 1, flag);
+	return;
+}*/
+
+/*
+ *  Function:
+ *    modoD0
+ *
+ *  Description:
+ *    Discovers the number of neighbors in a node at k stages.
+ *
+ *  Arguments:
+ *	  Pointer to the graph
+ *    int i keeping the index of the origin node
+ *	  int index keeping the index of the adjacent node
+ *
+ *  Return value:
+ *    int
+ */
 
 int modoD0(Graph *g, int v, int k)
 {
@@ -269,6 +393,22 @@ int modoD0(Graph *g, int v, int k)
 	}
 	return count;
 }
+
+/*
+ *  Function:
+ *    adjacencia
+ *
+ *  Description:
+ *    Discovers if a node has a neighbor in k stages.
+ *
+ *  Arguments:
+ *    pointer to the graph: g
+ *    int keeping the original node: v
+ *	  int  keeping the number of stages
+ *
+ *  Return value:
+ *    none
+ */
 
 void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage)
 {
