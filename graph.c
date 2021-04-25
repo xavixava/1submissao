@@ -339,13 +339,13 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 	for(i = 0; i < g->v; i++){
 		if(flag == 1)return flag;
 		else{
-			if((visited[i] == stage) && (stage!=0))vizinho(g, i+1, visited, maxstage, stage, flag);
+			if((visited[i] == stage) && (stage!=0))flag = vizinho(g, i+1, visited, maxstage, stage, flag);
 		}
 	}	
 	for(i = 0; i < g->v; i++){
 		if(flag == 1)return flag;
 		else{
-			if(visited[i] == stage + 1)vizinho(g, i+1, visited, maxstage, stage+1, flag);
+			if(visited[i] == stage + 1)flag = vizinho(g, i+1, visited, maxstage, stage+1, flag);
 		}
 	}
 	return flag;
