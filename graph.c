@@ -333,9 +333,12 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
 	}
-	if((visited[(getIndexList(l))-1])==0){
-		visited[(getIndexList(l))-1] = stage + 1;
+	i = getIndexList(l);
+	if(i!=-1){
+		if(visited[i-1]==0){
+			visited[i-1] = stage + 1;
 		}
+	}
 	for(i = 0; i < g->v; i++){
 		if(flag == 1)return flag;
 		else{
