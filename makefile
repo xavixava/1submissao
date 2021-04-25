@@ -1,6 +1,3 @@
-#	$(foreach file,$(FILES),./labconn $(file);)
-# https://stackoverflow.com/questions/1490949/how-to-write-loop-in-a-makefile
-#----------------------------------------------------------------------
 #   Compiler, Compiler Flags
 
 CC = gcc
@@ -12,7 +9,7 @@ SOURCES = main.c
 #   Objects  ('make' automatically compiles .c to .o)
 OBJECTS = main.o graph.o list.o
 
-proj: $(OBJECTS)
+aedmaps: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
 main.o: main.c graph.h main.h list.h
@@ -22,15 +19,15 @@ graph.o: graph.c graph.h list.h defs.h
 list.o: list.c list.h
 
 clean:
-	rm -f *.o  proj
+	rm -f *.o  aedmaps
 
 
 FILES = $(shell ls ../test/*.txt)
 
 VALG = valgrind --leak-check=full
 
-valgrind: proj
-	$(VALG) ./proj
+valgrind: aedmaps
+	$(VALG) ./aedmaps
 
 t:
 	for F in ${FILES}; do  ./proj $${F} ; done;
