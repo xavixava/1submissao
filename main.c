@@ -99,14 +99,18 @@ int main(int argc, char **argv){
 				case 'B':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
-					fprintf(out, "\n%d %d %s %d %d %lf\n", getV(g), getE(g), modo, edge1, edge2, b);
+					if(b==-1){
+						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
+                    }else{
+						fprintf(out, "\n%d %d %s %d %d %.2lf\n", getV(g), getE(g), modo, edge1, edge2, b);
+                    }
 				break;
 				case 'C':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
 					else
 					{
-						if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
+						if(edge2>=0){
 							l = modoC0(g, edge1, edge2);
 						}
 						else{
@@ -155,6 +159,11 @@ int main(int argc, char **argv){
 				case 'B':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
+					if(b==-1){
+						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
+                    }else{
+						fprintf(out, "\n%d %d %s %d %d %.2lf\n", getV(g), getE(g), modo, edge1, edge2, b);
+                    }
 					fprintf(out, "\n%d %d %s %d %d %lf\n", getV(g), getE(g), modo, edge1, edge2, b);
 				break;
 				case 'C':
@@ -162,7 +171,7 @@ int main(int argc, char **argv){
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
 					else
 					{
-						if((edge2>=0) && ((edge1<0)||(edge1 > getV(g)))){
+						if(edge2>=0){
 							l = modoC0(g, edge1, edge2);
 						}
 						else{
