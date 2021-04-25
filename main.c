@@ -122,12 +122,13 @@ int main(int argc, char **argv){
 			if(g==NULL) break;
 			
 			if(prob!=-1)modo = readprbs(probfile, g, out, modo);
-			if(prob == 0)prob = -1;
+			if((feof(probfile)!=0)||(prob == 0))prob = -1;
 			switch(modo[0]){
 				case 'D':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
-					printf("coisas fofinhas sobre nos");
-					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					if((edge1<=0)||(edge1 > getV(g))){
+						l=-1;
+						}
 					else
 					{
 						if((edge2>=0)){
@@ -168,7 +169,6 @@ int main(int argc, char **argv){
 			
 			if (map==1)GRAPHdestroy(g);
 			if(map==0)map = -1;
-			printf("merda");
 		}while((map!=-1) || (prob!=-1));
 	}
 	
@@ -233,6 +233,6 @@ char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo){
 
 	int k;
 	k=fscanf(fpprobs, "%s", modo);
-	if(k<=0)modo="ze";
+	if(k<=0)modo[0]='z';
 	return modo;
 }
