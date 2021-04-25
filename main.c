@@ -86,15 +86,15 @@ int main(int argc, char **argv){
 						l = 0;
 						}
 					}
-					fprintf(out, "%d %d %d\n", edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
 				break;
 				case 'A':
 					l=modoA0(g, edge1);
-					fprintf(out, "%d %d\n", edge1, l);
+					fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
 				break;
 				case 'B':
 					b = modoB0(g, edge1, edge2);
-					fprintf(out, "%d %d %f\n", edge1, edge2, b);
+					fprintf(out, "\n%d %d %s %d %d %lf\n", getV(g), getE(g), modo, edge1, edge2, b);
 				break;
 				case 'C':
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
@@ -107,7 +107,7 @@ int main(int argc, char **argv){
 							l = 0;
 						}
 					}
-					fprintf(out, "%d %d %d\n",edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo,edge1, edge2, l);
 				break;
 			}
 			}while(feof(probfile)==0);
@@ -138,17 +138,17 @@ int main(int argc, char **argv){
 						l = 0;
 						}
 					}
-					fprintf(out, "%d %d %d\n", edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
 				break;
 				case 'A':
 					fscanf(probfile, " %d", &edge1);
 					l = modoA0(g, edge1);
-					fprintf(out, "%d %d\n", edge1, l);
+					fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
 				break;
 				case 'B':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
-					fprintf(out, "%d %d %f\n", edge1, edge2, b);
+					fprintf(out, "\n%d %d %s %d %d %lf\n", getV(g), getE(g), modo, edge1, edge2, b);
 				break;
 				case 'C':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
@@ -162,7 +162,7 @@ int main(int argc, char **argv){
 							l = 0;
 						}
 					}
-					fprintf(out, "%d %d %d\n",edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo,edge1, edge2, l);
 				break;
 			}
 			
@@ -184,16 +184,17 @@ int main(int argc, char **argv){
 
 /*
  *  Function:
- *    initList
+ *    Openfile
  *
  *  Description:
- *    Initializes a new linked list.
+ *    Opens a file and exits if it can´t open it.
  *
  *  Arguments:
- *    None
+ *    char *filename keeping the name of the file
+ *	  char *mode 
  *
  *  Return value:
- *    Returns the pointer to a new linked list.
+ *    Returns a pointer to the opened file.
  */
 
 FILE *Openfile(char *filename, char *mode)
@@ -210,6 +211,22 @@ FILE *Openfile(char *filename, char *mode)
    return fp;
 }
 
+/*
+ *  Function:
+ *    readprbs
+ *
+ *  Description:
+ *    Reads the problems file and returns the problem.
+ *
+ *  Arguments:
+ *    fpprobs, pointer to the problems file
+ *	  g, pointer to the graph
+ *    out, pointer to the file we are writing include
+ *	  modo, NULL, pointer to problem string
+ *
+ *  Return value:
+ *    pointer to problem string
+ */
 
 char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo){
 
