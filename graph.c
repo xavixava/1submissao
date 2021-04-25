@@ -339,32 +339,6 @@ int modoC0 (Graph *g, int v, int k)
 	return;
 }/*
 
-/*int vizinho(Graph *g, int v, int *visited, int maxstage, int stage)
-{
-	List *l = g->vector[v-1]->next;
-	int i;
-	if(stage == maxstage){
-		if(visited[v-1] == maxstage){
-			*flag=1;
-			return;
-		}
-		else {
-			visited[v-1] = -1;
-			return;
-			}
-	}
-	visited[v-1] = -1;
-	while(getNextNodeList(l)!=NULL)
-	{
-		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
-		l = getNextNodeList(l);
-	} 
-	if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
-	for(i = 0; i < g->v; i++) if((visited[i] == stage) && (stage!=0)) vizinho(g, getIndexList(l), visited, maxstage, stage, flag);
-	for(i = 0; i < g->v; i++) if(visited[i] == stage+1) vizinho(g, getIndexList(l), visited, maxstage, stage + 1, flag);
-	return;
-}*/
-
 /*
  *  Function:
  *    modoD0
