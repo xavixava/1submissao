@@ -7,12 +7,13 @@
 int main(int argc, char **argv){
 	
 	Graph *g;
-	int map, prob, i = 0, l, edge1=0, edge2=0;
+	int map, prob, i = 0, l=0, edge1=0, edge2=0;
 	char *probsname = argv[2], *mapsname = argv[3], *saida, *modo;
 	FILE *mapfile, *probfile, *out;
 	double b;
 	
 	modo = (char*) malloc(3*sizeof(char));
+	modo[0] = '\0';
 
 	if (argc == 4){
 
@@ -130,7 +131,6 @@ int main(int argc, char **argv){
 		{
 			if(map!=-1)g = readmaps(mapfile);
 			if(g==NULL) break;
-			
 			if(prob!=-1)modo = readprbs(probfile, g, out, modo);
 			if((feof(probfile)!=0)||(prob == 0))prob = -1;
 			switch(modo[0]){
@@ -164,7 +164,6 @@ int main(int argc, char **argv){
                     }else{
 						fprintf(out, "\n%d %d %s %d %d %.2lf\n", getV(g), getE(g), modo, edge1, edge2, b);
                     }
-					fprintf(out, "\n%d %d %s %d %d %lf\n", getV(g), getE(g), modo, edge1, edge2, b);
 				break;
 				case 'C':
 					fscanf(probfile, " %d %d", &edge1, &edge2);

@@ -320,11 +320,11 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 	if(stage == maxstage){
 		if(visited[v-1] == maxstage){
 			flag = 1;
-			return 1;
+			return flag;
 		}
 		else {
 			visited[v-1] = -1;
-			return 0;
+			return flag;
 			}
 	}
 	visited[v-1]=-1;
@@ -336,17 +336,19 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 	if((visited[(getIndexList(l))-1])==0){
 		visited[(getIndexList(l))-1] = stage + 1;
 		}
-	for(i = 0; i < g->v; i++)
-		if(flag == 1)return 1;
+	for(i = 0; i < g->v; i++){
+		if(flag == 1)return flag;
 		else{
 			if((visited[i] == stage) && (stage!=0))vizinho(g, i+1, visited, maxstage, stage, flag);
 		}
-	for(i = 0; i < g->v; i++)
-		if(flag == 1)return 1;
+	}	
+	for(i = 0; i < g->v; i++){
+		if(flag == 1)return flag;
 		else{
 			if(visited[i] == stage + 1)vizinho(g, i+1, visited, maxstage, stage+1, flag);
 		}
-	return 0;
+	}
+	return flag;
 
 }
 
