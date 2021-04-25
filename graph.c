@@ -284,15 +284,17 @@ double modoB0(Graph *g,int v1, int v2){
  
 int modoC0 (Graph *g, int v, int k)
  { 
-	int a = g->v, i;
+	int a = g->v;
 	int visited[a], adj[a];
 	memset(visited, 0, a*sizeof(int));
 	memset(adj, 0, a*sizeof(int));
-	adjacencia(g, v,visited, adj, k, 0);
+	/*adjacencia(g, v,visited, adj, k, 0);
 	for(i=0; i < a; i++){
 		if(adj[i]==1)return 1;
 	}
-	return 0;
+	return 0;*/
+	a = vizinho(g, v,visited, k, 0, 0);
+	return a;
  }
 
 /*
@@ -311,33 +313,42 @@ int modoC0 (Graph *g, int v, int k)
  *    1 if there is a neighbor, 0 if there isn't
  */
 
-/*void vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int *flag)
+int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 {
-	List *l = g->vector[v-1]->next;
 	int i;
+	List *l = g->vector[v-1]->next;
 	if(stage == maxstage){
 		if(visited[v-1] == maxstage){
-			*flag=1;
-			return;
+			flag = 1;
+			return 1;
 		}
 		else {
 			visited[v-1] = -1;
-			return;
+			return 0;
 			}
 	}
-	
-	visited[v-1] = -1;
-	
+	visited[v-1]=-1;
 	while(getNextNodeList(l)!=NULL)
 	{
 		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
-	} 
-	if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
-	for(i = 0; i < g->v; i++) if((visited[i] == stage) && (stage!=0)) vizinho(g, getIndexList(l), visited, maxstage, stage, flag);
-	for(i = 0; i < g->v; i++) if(visited[i] == stage+1) vizinho(g, getIndexList(l), visited, maxstage, stage + 1, flag);
-	return;
-}/*
+	}
+	if((visited[(getIndexList(l))-1])==0){
+		visited[(getIndexList(l))-1] = stage + 1;
+		}
+	for(i = 0; i < g->v; i++)
+		if(flag == 1)return 1;
+		else{
+			if((visited[i] == stage) && (stage!=0))vizinho(g, i+1, visited, maxstage, stage, flag);
+		}
+	for(i = 0; i < g->v; i++)
+		if(flag == 1)return 1;
+		else{
+			if(visited[i] == stage + 1)vizinho(g, i+1, visited, maxstage, stage+1, flag);
+		}
+	return 0;
+
+}
 
 /*
  *  Function:
@@ -422,6 +433,20 @@ int getE(Graph *g)
 {
 	return ((g == NULL) ? 0 : g->e);
 }
+
+/*
+ *  Function:
+ *    readmaps
+ *
+ *  Description:
+ *    reads the mapfile and creates graph.
+ *
+ *  Arguments:
+ *    pointer to file
+ *
+ *  Return value:
+ *    pointer to graph
+ */
 
 Graph *readmaps(FILE * fpmaps){
 
