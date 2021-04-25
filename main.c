@@ -72,6 +72,7 @@ int main(int argc, char **argv){
 			g = readmaps(mapfile);
 			do{
 				modo = readprbs(probfile, g, out, modo);
+				if(modo==NULL)break;
 				switch(modo[0]){
 				case 'D':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
@@ -122,8 +123,8 @@ int main(int argc, char **argv){
 			if(g==NULL) break;
 			
 			if(prob!=-1)modo = readprbs(probfile, g, out, modo);
-			if(feof(probfile) !=0 || prob == 0)prob = -1;
-
+			if(prob == 0)prob = -1;
+			if(modo==NULL)break;
 			switch(modo[0]){
 				case 'D':
 					fscanf(probfile, " %d %d", &edge1, &edge2);
@@ -171,9 +172,10 @@ int main(int argc, char **argv){
 
 		}while((map!=-1) || (prob!=-1));
 	}
+	
 	if(g != NULL)GRAPHdestroy(g);
 	
-	free(modo);
+	if(modo!=NULL)free(modo);
 	
 	fclose(out);
 	fclose(probfile);
@@ -230,7 +232,8 @@ FILE *Openfile(char *filename, char *mode)
 
 char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo){
 
-	fscanf(fpprobs, "%s", modo);
-	fprintf(out, "\n%d %d %s ", getV(g), getE(g), modo);
+	int k;
+	k=fscanf(fpprobs, "%s", modo);
+	if(k<=0)free(modo);
 	return modo;
 }
