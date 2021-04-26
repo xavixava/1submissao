@@ -281,7 +281,7 @@ double modoB0(Graph *g,int v1, int v2){
 
     while(l!=NULL){
 
-        if(getIndexList(l) == v2 ){
+        if(getIndexList(l) == v2){
         return getCustoList(l);
 
         }
@@ -399,14 +399,10 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 
 int modoD0(Graph *g, int v, int k)
 {
-	int a = g->v, i, count=0;
-	int visited[a], adj[a];
+	int a = g->v, count=0;
+	int visited[a];
 	memset(visited, 0, a*sizeof(int));
-	memset(adj, 0, a*sizeof(int));
-	adjacencia(g, v, visited, adj, k, 0);
-	for(i=0; i < a; i++){
-		if(adj[i]==1)count++;
-	}
+	count =	adjacencia(g, v, visited, k, 0, 0);
 	return count;
 }
 
@@ -426,18 +422,19 @@ int modoD0(Graph *g, int v, int k)
  *    none
  */
 
-void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage)
+int adjacencia(Graph *g, int v, int *visited, int maxstage, int stage, int count)
 {
 	int i;
 	List *l = g->vector[v-1]->next;
 	if(stage == maxstage){
 		if(visited[v-1] == maxstage){
-			adj[v-1] = 1;
-			return;
+			visited[v-1]=-1;
+			count++;
+			return count;
 		}
 		else {
 			visited[v-1] = -1;
-			return;
+			return count;
 			}
 	}
 	visited[v-1]=-1;
@@ -449,9 +446,9 @@ void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage
 	if((visited[(getIndexList(l))-1])==0){
 		visited[(getIndexList(l))-1] = stage + 1;
 		}
-	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))adjacencia(g, i+1, visited, adj, maxstage, stage);
-	for(i = 0; i < g->v; i++)if(visited[i] == stage + 1)adjacencia(g, i+1, visited, adj, maxstage, stage+1);
-	return;
+	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))count = adjacencia(g, i+1, visited, maxstage, stage, count);
+	for(i = 0; i < g->v; i++)if(visited[i] == stage + 1)count = adjacencia(g, i+1, visited, maxstage, stage+1, count);
+	return count;
 
 }
 

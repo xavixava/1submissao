@@ -19,7 +19,7 @@ double modoB0(Graph *g,int edge1,int edge2);
 int modoC0 (Graph *g, int v, int k);
 int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag);
 int modoD0(Graph *g, int v, int k);
-void adjacencia(Graph *g, int v, int *visited, int *adj, int maxstage, int stage);
+int adjacencia(Graph *g, int v, int *visited, int maxstage, int stage, int count);
 
 int getV(Graph *g);
 int getE(Graph *g);

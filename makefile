@@ -12,9 +12,9 @@ OBJECTS = main.o graph.o list.o
 aedmaps: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-main.o: main.c graph.h main.h list.h
+main.o: main.c graph.h list.h
 
-graph.o: graph.c graph.h list.h defs.h
+graph.o: graph.c graph.h list.h 
 
 list.o: list.c list.h
 
@@ -30,12 +30,12 @@ valgrind: aedmaps
 	$(VALG) ./aedmaps
 
 t:
-	for F in ${FILES}; do  ./proj $${F} ; done;
+	for F in ${FILES}; do  ./aedmaps $${F} ; done;
 
 
 tv:
-	for F in ${FILES}; do ${VALG} ./proj $${F} ; done;
+	for F in ${FILES}; do ${VALG} ./aedmaps $${F} ; done;
 
 
 tt:
-	for F in ${FILES}; do  time ./proj $${F} ; done;
+	for F in ${FILES}; do  time ./aedmaps $${F} ; done;
