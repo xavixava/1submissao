@@ -37,10 +37,10 @@ List * initList(void)
 
 /*
  *  Function:
- *    lengthLinkedList
+ *    lengthList
  *
  *  Description:
- *    Determines the length of a linked list.
+ *    Determines the length of a list.
  *
  *  Arguments:
  *    Pointer to the first node of the linked list:
@@ -82,6 +82,21 @@ List *getNextNodeList(List * node)
   return ((node == NULL) ? NULL : node->next);
 }
 
+/*
+ *  Function:
+ *    getCustoList
+ *
+ *  Description:
+ *    Returns the cost of a linked list.
+ *
+ *  Arguments:
+ *    Pointer to the current linked list node:´
+ *        (List *) node
+ *
+ *  Return value:
+ *    Returns the double value of cost. NULL
+ *   is returned in case the current node is empty.
+ */
 
 
 double getCustoList(List * node){
@@ -101,7 +116,7 @@ double getCustoList(List * node){
  *        (List *) node
  *
  *  Return value:
- *    Returns the int value of index. NULL
+ *    Returns the int value of index. -1
  *   is returned in case the current node is empty.
  */
 int getIndexList(List * node)
@@ -123,7 +138,7 @@ int getIndexList(List * node)
  *        (LinkedList *) next
  *
  *  Return value:
- *    Returns void.
+ *    None.
  */
 void insertNextNodeList(List * node, List *next)
 {
@@ -133,19 +148,17 @@ void insertNextNodeList(List * node, List *next)
 
 /*
  *  Function:
- *    assignIndexList
+ *    createEdge
  *
  *  Description:
- *    assigns int to the index of a linked list.
+ *    Creates edge and assigns its values.
  *
  *  Arguments:
- *    Pointer to the current linked list node:
- *        (LinkedList *) node
- *	  Pointer to the next linked list node:
- *        (LinkedList *) next
+ *    int keeping the destination node of the edge 
+ *	  double keeping the cost of the edge
  *
  *  Return value:
- *    Returns void.
+ *    pointer to the new edge.
  */
 
 List *createEdge(int i, double cost)

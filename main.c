@@ -2,18 +2,49 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main.h"
+#include "list.h"
+#include "graph.h"
+
+FILE *Openfile(char *name, char *mode);
+
+char *readprbs(FILE* fpprobs, Graph *g, FILE *out, char *modo);
+
+/******************************************************************************
+ * CreateOutputNameX0 ()
+ *
+ * Arguments: filename - name of file with extension
+ * Returns: (void)
+ * Side-Effects: none
+ *
+ * Description: creates filename for output (mode X0)
+ ******************************************************************************/
+ 
+char *CreateOutputNameX0(char *filename)
+{
+	char *ftraveler, *ze;
+	ze = NULL;
+	ze = (char*) malloc((strlen(filename)+4)*sizeof(char));
+	ze = strcpy(ze, filename);
+	printf("%s", ze);
+	ftraveler = strrchr(ze, '.');
+	*ftraveler = '\0';
+	strcat(ze, ".queries");
+	printf("%s", ze);
+	return ze;
+}
 
 int main(int argc, char **argv){
 	
 	Graph *g;
-	int map, prob, i = 0, l=0, edge1=0, edge2=0;
-	char *probsname = argv[2], *mapsname = argv[3], *saida, *modo;
+	int map=0, prob=0, i = 0, l=0, edge1=0, edge2=0, scan=0;
+	char *probsname = argv[2], *mapsname = argv[3], *modo, *saida;
 	FILE *mapfile, *probfile, *out;
 	double b;
 	
 	modo = (char*) malloc(3*sizeof(char));
 	modo[0] = '\0';
+
+	g = NULL;
 
 	if (argc == 4){
 
@@ -51,22 +82,21 @@ int main(int argc, char **argv){
     mapfile = Openfile(mapsname, "r");
 	probfile = Openfile(probsname, "r");
 	
-	saida = (char*) malloc((strlen(mapsname)+4)*sizeof(char));
 	/*if (saida == NULL)
 	{
 		printf("Não foi possivel alocar memoria\n");
 		exit(1);
 	}*/
 	
-	l=strlen(mapsname)-5;
-	strncpy(saida, mapsname, (strlen(mapsname)-5));
-    saida[l]='\0';
-
-	saida = strcat(saida, ".queries");
-
+	saida=CreateOutputNameX0(mapsname);
+	printf("%s", saida);
+	
 	out = Openfile(saida, "w+");
-	free(saida);
+	
 	fprintf(out, "%s %s %s\n", argv[1], argv[2], argv[3]);
+	
+	free(saida);
+
 
 	if ((map==1) && (prob==1)){
 		do{
@@ -74,9 +104,9 @@ int main(int argc, char **argv){
 			if(g==NULL)break;
 			do{
 				modo = readprbs(probfile, g, out, modo);
-			switch(modo[0]){
+				switch(modo[0]){
 				case 'D':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g))){
 						l=-1;
 						}
@@ -92,12 +122,14 @@ int main(int argc, char **argv){
 					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
 				break;
 				case 'A':
-					fscanf(probfile, " %d", &edge1);
-					l = modoA0(g, edge1);
-					fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
+					scan=fscanf(probfile, " %d", &edge1);
+					if (scan==1){
+						l = modoA0(g, edge1);
+						fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
+					}
 				break;
 				case 'B':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
 					if(b==-1){
 						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
@@ -106,7 +138,7 @@ int main(int argc, char **argv){
                     }
 				break;
 				case 'C':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
 					else
 					{
@@ -134,7 +166,7 @@ int main(int argc, char **argv){
 			if((feof(probfile)!=0)||(prob == 0))prob = -1;
 			switch(modo[0]){
 				case 'D':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g))){
 						l=-1;
 						}
@@ -150,12 +182,12 @@ int main(int argc, char **argv){
 					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
 				break;
 				case 'A':
-					fscanf(probfile, " %d", &edge1);
+					scan=fscanf(probfile, " %d", &edge1);
 					l = modoA0(g, edge1);
 					fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
 				break;
 				case 'B':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					b = modoB0(g, edge1, edge2);
 					if(b==-1){
 						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
@@ -164,7 +196,7 @@ int main(int argc, char **argv){
                     }
 				break;
 				case 'C':
-					fscanf(probfile, " %d %d", &edge1, &edge2);
+					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
 					if((edge1<=0)||(edge1 > getV(g)))l=-1;
 					else
 					{
@@ -185,6 +217,8 @@ int main(int argc, char **argv){
 	}
 	
 	if(g != NULL)GRAPHdestroy(g);
+	
+	fprintf(out, "\n");
 	
 	free(modo);
 	

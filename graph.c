@@ -222,23 +222,50 @@ void GRAPHdestroy(Graph *g)
 	return;
 }
 
+/*
+ *  Function:
+ *    modoA0
+ *
+ *  Description:
+ *    Discovers the number of neighbors of a node.
+ *
+ *  Arguments:
+ *    pointer to the graph: g
+ *    int keeping the node: v1´
+ *
+ *  Return value:
+ *    Returns the number of neighbours
+ */
+
 
 int modoA0(Graph *g, int v){
 
-    int i, count;
+    int count;
 	
     if((v<1)||(v>g->v)){
         return -1;
-    }else{
-
-        for(i=0; i<=g->v; i++) {
-            if(g->vector[i]->localidade==v) break;
-        }
     }
 
-    count=lengthList(g->vector[i]->next);
+    count=lengthList(g->vector[v-1]->next);
     return count;
 }
+
+/*
+ *  Function:
+ *    modoB0
+ *
+ *  Description:
+ *    Discovers if two nodes are directly connected.
+ *
+ *  Arguments:
+ *    pointer to the graph: g
+ *    int keeping the first node: v1
+ *      int keeping the second node: v2
+ *
+ *  Return value:
+ *    Returns the value of cost if the nodes are directly connected.
+ *   -1 is returned if the nodes are not directly connected.
+ */
 
 
 double modoB0(Graph *g,int v1, int v2){
@@ -455,14 +482,14 @@ int getE(Graph *g)
 Graph *readmaps(FILE * fpmaps){
 
     Graph *g;
-    int n_vertices=0, n_arestas=0, countv=0, counta=0;
+    int n_vertices=0, n_arestas=0, countv=0, counta=0,scan=0;
     double custos;
     char auxc[MAX_LINHA], *classificador;
     int edge1, edge2;
 
-        counta = fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas);
+        scan = fscanf(fpmaps, "%d %d", &n_vertices, &n_arestas);
 
-        if(counta==2) g = GRAPHinit(n_vertices, n_arestas);
+        if(scan==2) g = GRAPHinit(n_vertices, n_arestas);
         else {
             return NULL;
             }
@@ -471,29 +498,30 @@ Graph *readmaps(FILE * fpmaps){
 
         while(countv < n_vertices){
 
-            fscanf(fpmaps, "%d %s", &edge1, auxc);
+            scan = fscanf(fpmaps, "%d %s", &edge1, auxc);
 
+			if (scan==2){
+				if((strcmp("-",auxc))==0){
 
-            if((strcmp("-",auxc))==0){
+					classificador=NULL;
 
-                classificador=NULL;
+				}else{
 
-            }else{
-
-                classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
-                if (classificador == NULL){
-                /*printf("Não foi possivel alocar memoria\n");*/
-                exit(0);
-                }
-                strcpy(classificador, auxc);
-                }
-            GRAPHaddV(g, edge1, classificador);
-            countv++;
+					classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
+					if (classificador == NULL){
+					/*printf("Não foi possivel alocar memoria\n");*/
+					exit(0);
+					}
+					strcpy(classificador, auxc);
+					}
+				GRAPHaddV(g, edge1, classificador);
+				countv++;
+			}
          }
 
          while(counta < n_arestas){
 
-            fscanf(fpmaps, "%d %d %lf", &edge1, &edge2, &custos);
+            scan=fscanf(fpmaps, "%d %d %lf", &edge1, &edge2, &custos);
             counta++;
             GRAPHinsertE(g, edge1, edge2, custos);
             GRAPHinsertE(g, edge2, edge1, custos);
