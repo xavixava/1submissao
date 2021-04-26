@@ -138,8 +138,8 @@ void GRAPHinsertE(Graph *g, int index, int adj, double custo)
 		g->vector[index-1]->next = l;
 		return;
 	}
-	while (getNextNodeList(n) != NULL) n = getNextNodeList(n);
-	insertNextNodeList(n, l);
+	insertNextNodeList(l, n);
+	g->vector[index-1]->next = l;
 	
 	return;
 }
