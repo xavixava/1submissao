@@ -1,7 +1,6 @@
 #ifndef MainHeader
 #define MainHeader
 
-#include "list.h"
 #include "graph.h"
 
 FILE *Openfile(char *name, char *mode);

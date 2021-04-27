@@ -6,6 +6,10 @@
 
 #define MAX_LINHA 30
 
+#define swap(a, b) {typeof(a) c=b; b=a; a=c;} 
+
+#define MAX(a, b) (a > b) ? 1 : 0
+
 /*	Data Type: Graph
  *  Description: Structure with:
  *      1) int that keeps the number of nodes
@@ -55,7 +59,6 @@ Graph *GRAPHinit(int v, int a)
 	g = (Graph *) malloc(sizeof(Graph)); 
 	if (g == NULL)
 	{
-		printf("Não foi possivel alocar memoria\n");
 		exit(1);
 	}
 	
@@ -65,7 +68,6 @@ Graph *GRAPHinit(int v, int a)
 	vector = NULL;
 	vector = (Location **) malloc(v*sizeof(Location*));
 	if (vector == NULL){
-		printf("Não foi possivel alocar memoria\n");
 		exit(1);
 	}
 	*vector = NULL;
@@ -96,7 +98,6 @@ void GRAPHaddV(Graph *g, int localidade, char *interesse)
 	if(localidade <= (*g).v){
 		n = (Location *) malloc(sizeof(Location));
 		if (n == NULL){
-		printf("Não foi possivel alocar memoria\n");
 		exit(1);
 		}
 		n -> localidade = localidade;
@@ -105,7 +106,6 @@ void GRAPHaddV(Graph *g, int localidade, char *interesse)
 		(*g).vector[localidade-1]=n;
 		return;
 	}
-	printf("Localidade inexistente");
 	return;
 }
 
@@ -132,15 +132,18 @@ void GRAPHinsertE(Graph *g, int index, int adj, double custo)
 	n = initList();
 	l = initList();
 	l = createEdge(adj, custo);	
-	if(g->vector[index-1]->next != NULL) n = g->vector[index-1]->next;
-	else
-	{
+	if(g->vector[index-1]->next == NULL){
 		g->vector[index-1]->next = l;
 		return;
 	}
+	n = g->vector[index-1]->next;
+	/*if(getIndexList(l)<getIndexList(n)){*/
 	insertNextNodeList(l, n);
 	g->vector[index-1]->next = l;
-	
+	/*}
+	else{
+		insertSortedList(n, l);
+	}*/
 	return;
 }
 
@@ -200,17 +203,16 @@ void GRAPHdestroy(Graph *g)
 
 	for(i = 0; i < g->v; i++)
 	{
-		if(g->vector[i]->next!=NULL){
+		if(g->vector[i]->next==NULL)return;
+		else{
 			p = g->vector[i]->next;
 			n = p;
-			while(getNextNodeList(n)!=NULL){
+			while(n!=NULL){
 				p = getNextNodeList(n);
 				free(n);
 				g->e--;
 				n = p;
 			}
-			free(n);
-			g->e--;
 		}
 		free(g->vector[i]->interesse);
 	}
@@ -271,16 +273,18 @@ int modoA0(Graph *g, int v){
 double modoB0(Graph *g,int v1, int v2){
 
     List *l;
+	int v=g->v, a=1;
 
-    if((v1>g->v)||(v1<1)||(v2>g->v)||(v2<1)){
+    if(MAX(v1, v)||MAX(a, v1)||MAX(v2, v)||MAX(a, v2)){
 
         return -1;
     }
 
+	if(MAX(v2, v1))swap(v1, v2);
+
     l=g->vector[v1-1]->next;
-
+	
     while(l!=NULL){
-
         if(getIndexList(l) == v2){
         return getCustoList(l);
 
@@ -311,14 +315,8 @@ double modoB0(Graph *g,int v1, int v2){
 int modoC0 (Graph *g, int v, int k)
  { 
 	int a = g->v;
-	int visited[a], adj[a];
+	int visited[a];
 	memset(visited, 0, a*sizeof(int));
-	memset(adj, 0, a*sizeof(int));
-	/*adjacencia(g, v,visited, adj, k, 0);
-	for(i=0; i < a; i++){
-		if(adj[i]==1)return 1;
-	}
-	return 0;*/
 	a = vizinho(g, v,visited, k, 0, 0);
 	return a;
  }
@@ -354,7 +352,7 @@ int vizinho(Graph *g, int v, int *visited, int maxstage, int stage, int flag)
 			}
 	}
 	visited[v-1]=-1;
-	while(getNextNodeList(l)!=NULL)
+	while(l!=NULL)
 	{
 		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
@@ -438,14 +436,11 @@ int adjacencia(Graph *g, int v, int *visited, int maxstage, int stage, int count
 			}
 	}
 	visited[v-1]=-1;
-	while(getNextNodeList(l)!=NULL)
+	while(l != NULL)
 	{
 		if((visited[(getIndexList(l))-1])==0)visited[(getIndexList(l))-1] = stage + 1;
 		l = getNextNodeList(l);
 	}
-	if((visited[(getIndexList(l))-1])==0){
-		visited[(getIndexList(l))-1] = stage + 1;
-		}
 	for(i = 0; i < g->v; i++)if((visited[i] == stage) && (stage!=0))count = adjacencia(g, i+1, visited, maxstage, stage, count);
 	for(i = 0; i < g->v; i++)if(visited[i] == stage + 1)count = adjacencia(g, i+1, visited, maxstage, stage+1, count);
 	return count;
@@ -459,7 +454,7 @@ int getV(Graph *g)
 
 int getE(Graph *g)
 {
-	return ((g == NULL) ? 0 : g->e);
+	return ((g == NULL) ? -1 : g->e);
 }
 
 /*
@@ -506,10 +501,10 @@ Graph *readmaps(FILE * fpmaps){
 
 					classificador = (char*) malloc((strlen(auxc)+1)*sizeof(char));
 					if (classificador == NULL){
-					/*printf("Não foi possivel alocar memoria\n");*/
-					exit(0);
+					exit(1);
 					}
 					strcpy(classificador, auxc);
+					/*classificador[3]='\0';*/
 					}
 				GRAPHaddV(g, edge1, classificador);
 				countv++;

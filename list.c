@@ -3,6 +3,8 @@
 
 #include"list.h"
 
+#define MAX(a, b) (a > b) ? 1 : 0
+
 /*
  *  Data Type: LinkedListStruct
  *
@@ -144,6 +146,31 @@ void insertNextNodeList(List * node, List *next)
 {
 	node->next = next;
 	return;
+}
+
+void insertSortedList(List *first, List *node)
+{
+	int a, b;
+	List *aux, *l;
+	if(first->next==NULL){
+		first->next=node;
+		return;
+	}
+	l = first;
+	aux = l;
+	a=node->index;
+	while((l->next)!=NULL){
+		l=l->next;
+		b = l->index;
+		if(!MAX(a, b))
+		{
+			node->next = l;
+			aux->next = node;
+			return;
+		}
+		aux = l;
+	}
+	l->next=node;
 }
 
 /*

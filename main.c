@@ -25,43 +25,47 @@ char *CreateOutputNameX0(char *filename)
 	ze = NULL;
 	ze = (char*) malloc((strlen(filename)+4)*sizeof(char));
 	ze = strcpy(ze, filename);
-	printf("%s", ze);
 	ftraveler = strrchr(ze, '.');
 	*ftraveler = '\0';
 	strcat(ze, ".queries");
-	printf("%s", ze);
 	return ze;
 }
 
 int main(int argc, char **argv){
 	
 	Graph *g;
-	int map=0, prob=0, i = 0, l=0, edge1=0, edge2=0, scan=0;
+	int map=0, prob=0, i = 0, l=0, edge1=0, edge2=0, scan=0, v, a;
 	char *probsname = argv[2], *mapsname = argv[3], *modo, *saida;
 	FILE *mapfile, *probfile, *out;
 	double b;
+	
+	if (argc!=4) exit(1);
 	
 	modo = (char*) malloc(3*sizeof(char));
 	modo[0] = '\0';
 
 	g = NULL;
 
-	if (argc == 4){
-
-	if(argv[1][2]== 'o')	prob = 0;
-
-	else if(argv[1][2]== 'a') prob = 1;
-
-	if(argv[1][3] == 'o') map = 0;
-
-	else if(argv[1][3] == 'a')  map = 1;
+	switch(argv[1][2]){
+		case 'o':
+			prob=0;
+		break;
+		case'a':
+			prob=1;
+		break;
 	}
-	else if (argc!=4) exit(1);
+	switch(argv[1][3]){
+		case 'o':
+			map=0;
+		break;
+		case'a':
+			map=1;
+		break;
+	}
 
 	while (i <= (strlen(probsname)-6)){ /*verificação da extensão do ficheiro prbs(possivelmente desnecessário) */
 	if(i == (strlen(probsname)-6)){
 			if(probsname[i] != '.' || probsname[i+1] != 'p' || probsname[i+2] != 'r' || probsname[i+3] != 'b' || probsname[i+4] != 's' || probsname[i+5] != '1') {
-				printf("Extensão errada\n");
 				exit(1);
 			}
 		}
@@ -72,7 +76,6 @@ int main(int argc, char **argv){
 	while (i <= (strlen(mapsname)-5)){ /* verificação da extensão do ficheiro maps(possivelmente desnecessário) */
 		if(i == (strlen(mapsname)-5)){
 			if(mapsname[i] != '.' || mapsname[i+1] != 'm' || mapsname[i+2] != 'a' || mapsname[i+3] != 'p' || mapsname[i+4] != 's') {
-				printf("Extensão errada\n");
 				exit(1);
 			}
 		}
@@ -82,14 +85,7 @@ int main(int argc, char **argv){
     mapfile = Openfile(mapsname, "r");
 	probfile = Openfile(probsname, "r");
 	
-	/*if (saida == NULL)
-	{
-		printf("Não foi possivel alocar memoria\n");
-		exit(1);
-	}*/
-	
 	saida=CreateOutputNameX0(mapsname);
-	printf("%s", saida);
 	
 	out = Openfile(saida, "w+");
 	
@@ -101,13 +97,16 @@ int main(int argc, char **argv){
 	if ((map==1) && (prob==1)){
 		do{
 			g = readmaps(mapfile);
+			v = getV(g);
+			a = getE(g);
 			if(g==NULL)break;
 			do{
 				modo = readprbs(probfile, g, out, modo);
 				switch(modo[0]){
 				case 'D':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
-					if((edge1<=0)||(edge1 > getV(g))){
+					if(scan!=2)break;
+					if((edge1<=0)||(edge1 > v)){
 						l=-1;
 						}
 					else
@@ -119,27 +118,28 @@ int main(int argc, char **argv){
 						l = 0;
 						}
 					}
-					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", v, a, modo, edge1, edge2, l);
 				break;
 				case 'A':
 					scan=fscanf(probfile, " %d", &edge1);
-					if (scan==1){
+					if (scan!=1)break;
 						l = modoA0(g, edge1);
-						fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
-					}
+						fprintf(out, "\n%d %d %s %d %d\n", v, a, modo, edge1, l);	
 				break;
 				case 'B':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
+					if(scan!=2)break;
 					b = modoB0(g, edge1, edge2);
 					if(b==-1){
-						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
+						fprintf(out, "\n%d %d %s %d %d -1\n", v, a, modo, edge1, edge2);
                     }else{
-						fprintf(out, "\n%d %d %s %d %d %.2lf\n", getV(g), getE(g), modo, edge1, edge2, b);
+						fprintf(out, "\n%d %d %s %d %d %.2lf\n", v, a, modo, edge1, edge2, b);
                     }
 				break;
 				case 'C':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
-					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					if(scan!=2)break;
+					if((edge1<=0)||(edge1 > v))l=-1;
 					else
 					{
 						if(edge2>=0){
@@ -149,7 +149,7 @@ int main(int argc, char **argv){
 							l = 0;
 						}
 					}
-					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo,edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", v, a, modo,edge1, edge2, l);
 				break;
 			}
 			}while(feof(probfile)==0);
@@ -162,12 +162,15 @@ int main(int argc, char **argv){
 		{
 			if(map!=-1)g = readmaps(mapfile);
 			if(g==NULL) break;
+			v = getV(g);
+			a = getE(g);
 			if(prob!=-1)modo = readprbs(probfile, g, out, modo);
 			if((feof(probfile)!=0)||(prob == 0))prob = -1;
 			switch(modo[0]){
 				case 'D':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
-					if((edge1<=0)||(edge1 > getV(g))){
+					if(scan!=2)break;
+					if((edge1<=0)||(edge1 > v)){
 						l=-1;
 						}
 					else
@@ -179,25 +182,28 @@ int main(int argc, char **argv){
 						l = 0;
 						}
 					}
-					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo, edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", v, a, modo, edge1, edge2, l);
 				break;
 				case 'A':
 					scan=fscanf(probfile, " %d", &edge1);
+					if(scan!=1)break;
 					l = modoA0(g, edge1);
-					fprintf(out, "\n%d %d %s %d %d\n", getV(g), getE(g), modo, edge1, l);
+					fprintf(out, "\n%d %d %s %d %d\n", v, a, modo, edge1, l);
 				break;
 				case 'B':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
+					if(scan!=2)break;
 					b = modoB0(g, edge1, edge2);
 					if(b==-1){
-						fprintf(out, "\n%d %d %s %d %d -1\n", getV(g), getE(g), modo, edge1, edge2);
+						fprintf(out, "\n%d %d %s %d %d -1\n", v, a, modo, edge1, edge2);
                     }else{
-						fprintf(out, "\n%d %d %s %d %d %.2lf\n", getV(g), getE(g), modo, edge1, edge2, b);
+						fprintf(out, "\n%d %d %s %d %d %.2lf\n", v, a, modo, edge1, edge2, b);
                     }
 				break;
 				case 'C':
 					scan=fscanf(probfile, " %d %d", &edge1, &edge2);
-					if((edge1<=0)||(edge1 > getV(g)))l=-1;
+					if(scan!=2)break;
+					if((edge1<=0)||(edge1 > v))l=-1;
 					else
 					{
 						if(edge2>=0){
@@ -207,11 +213,11 @@ int main(int argc, char **argv){
 							l = 0;
 						}
 					}
-					fprintf(out, "\n%d %d %s %d %d %d\n", getV(g), getE(g), modo,edge1, edge2, l);
+					fprintf(out, "\n%d %d %s %d %d %d\n", v, a, modo,edge1, edge2, l);
 				break;
 			}
 			
-			if (map==1)GRAPHdestroy(g);
+			if (g != NULL)GRAPHdestroy(g);
 			if(map==0)map = -1;
 		}while((map!=-1) || (prob!=-1));
 	}

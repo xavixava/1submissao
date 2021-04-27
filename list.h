@@ -14,9 +14,11 @@ int getIndexList(List * node);
 
 void insertNextNodeList(List * node, List *next);
 
+void insertSortedList(List *first, List *node);
+
 List *createEdge(int i, double cost);
 
 double getCustoList(List * node);
 
-/* End of: Protect multiple inclusions                              */
+/* End of: Protect multiple inclusions */
 #endif
